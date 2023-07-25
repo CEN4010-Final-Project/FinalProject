@@ -1,17 +1,23 @@
-import React from "react";
+import { useContext } from "react";
+import authContext from "@/context/authContext";
 import Link from "next/link";
 import SearchBar from "./Searchbar";
 
 const NavBar = () => {
+  const ctx = useContext(authContext);
+  const authHandler = () => {
+    if (ctx.user) {
+      ctx.signOut();
+    } else {
+      ctx.signIn();
+    }
+  };
   return (
-    <nav
-      id="header"
-      className="w-full z-30 top-10 py-1 bg-blue-100 shadow-lg border-b border-blue-400"
-    >
-      <div className="w-full flex items-center justify-between mt-0 px-6 py-2">
+    <nav id="header" className="w-full z-30 top-10 py-1 bg-yellow-200">
+      <div className="w-full flex items-center justify-between mt-0 px-6 py-1">
         <label htmlFor="menu-toggle" className="cursor-pointer md:hidden block">
           <svg
-            className="fill-current text-blue-600"
+            className="fill-current"
             xmlns="http://www.w3.org/2000/svg"
             width="20"
             height="20"
@@ -27,11 +33,11 @@ const NavBar = () => {
           id="menu"
         >
           <nav>
-            <ul className="md:flex items-center justify-between text-base text-blue-600 pt-4 md:pt-0">
+            <ul className="md:flex items-center justify-between text-base pt-4 md:pt-0">
               <i className="fas fa-utensils mr-2"></i>
               <li>
                 <Link
-                  className="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2"
+                  className="font-bold inline-block no-underline hover:text-black text-lg py-2 px-4 lg:-ml-2"
                   href="/"
                 >
                   Tastebudz
@@ -39,13 +45,13 @@ const NavBar = () => {
               </li>
               <li>
                 <Link
-                  className="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2"
+                  className="inline-block no-underline hover:text-black py-2 px-4 lg:-ml-2"
                   href="/recipes"
                 >
                   Recipes
                 </Link>
               </li>
-              <li >
+              <li>
                 <SearchBar />
               </li>
               {/* <li>
@@ -65,8 +71,11 @@ const NavBar = () => {
           id="nav-content"
         >
           <div className="auth flex items-center w-full md:w-full">
-            <button className="bg-transparent text-gray-800  p-2 rounded border border-gray-300 mr-4 hover:bg-gray-100 hover:text-gray-700">
-              Sign in
+            <button
+              className="bg-transparent p-1 border-black hover:border-b-2"
+              onClick={authHandler}
+            >
+              {ctx.user ? "Sign out" : "Sign in"}
             </button>
           </div>
         </div>

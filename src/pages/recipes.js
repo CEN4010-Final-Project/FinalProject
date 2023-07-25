@@ -12,7 +12,6 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const [recipes, setRecipes] = useState([]);
-  const [selectedRecipeIds, setSelectedRecipeIds] = useState([]);
   const router = useRouter();
 
   initFirebase();
@@ -25,7 +24,7 @@ export default function Home() {
       const newData = await result.json();
       setRecipes(newData.recipes);
     };
-    const timeout = setTimeout(getData, 1000);
+    const timeout = setTimeout(getData, 100);
 
     return () => clearTimeout(timeout);
   }, []);
