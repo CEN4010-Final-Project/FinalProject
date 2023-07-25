@@ -3,11 +3,21 @@ import { useEffect, useState } from "react";
 import { Inter } from "next/font/google";
 import axios from "axios";
 
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { initFirebase } from "../../firebase/firebaseApp";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useRouter } from "next/router";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const [recipes, setRecipes] = useState([]);
   const [selectedRecipeIds, setSelectedRecipeIds] = useState([]);
+  const router = useRouter();
+
+  initFirebase();
+  const auth = getAuth();
+  const [user, loading] = useAuthState(auth);
 
   useEffect(() => {
     const getData = async () => {
@@ -38,68 +48,131 @@ export default function Home() {
     }
   };
 
-  return (
-    <>
-      <Head>
-        <title>TasteBudz</title>
-        <meta name="description" content="Online recipe service" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <main className={`${inter.className} container max-w-2xl mx-auto px-4`}>
-        <h1 className="text-3xl font-bold pt-3">Recipes</h1>
-        {recipes ? (
-          recipes.map((recipe) => (
-            <div
-              key={recipe.id}
-              className="flex gap-x-6 mt-3 p-4 bg-slate-100 rounded-lg"
-            >
-              <div className="flex-grow">
-                <h2 className="text-lg">
-                  {recipe.title}
-                  {recipe.vegetarian && (
-                    <>
-                      &nbsp;
-                      <span className="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
-                        Vegetarian
-                      </span>
-                    </>
+  const callApi = async () => {
+    const token = await user.getIdToken();
+
+    const echoEndpoint = "https://jwtecho.pixegami.io";
+    const requestInfo = {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    };
+
+    const response = await fetch(echoEndpoint, requestInfo);
+    const responseBody = await response.json();
+    console.log(responseBody);
+  };
+
+  const getId = async () => {
+    const token = await user.getIdToken();
+
+    const echoEndpoint = "https://jwtecho.pixegami.io";
+    const requestInfo = {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    };
+
+    const response = await fetch(echoEndpoint, requestInfo);
+    const responseBody = await response.json();
+    console.log(responseBody.token_claims.user_id);
+  };
+
+  if (loading) {
+    return <div>Loading....</div>;
+  }
+
+  if (!user) {
+    router.push("/");
+    return <div>User is not Signed In</div>;
+  }
+
+  if (user) {
+    return (
+      <>
+        <Head>
+          <title>TasteBudz</title>
+          <meta name="description" content="Online recipe service" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+        <main className={`${inter.className} container max-w-2xl mx-auto px-4`}>
+          <div>Welcome {user.displayName}</div>
+          <button
+            className="bg-[rgb(31,41,55)] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+            type="button"
+            onClick={() => auth.signOut()}
+          >
+            Sign Out
+          </button>
+          <button
+            className="bg-[rgb(31,41,55)] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+            type="button"
+            onClick={callApi}
+          >
+            get Sign in token
+          </button>
+          <button
+            className="bg-[rgb(31,41,55)] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+            type="button"
+            onClick={getId}
+          >
+            get user id
+          </button>
+          <h1 className="text-3xl font-bold pt-3">Recipes</h1>
+          {recipes ? (
+            recipes.map((recipe) => (
+              <div
+                key={recipe.id}
+                className="flex gap-x-6 mt-3 p-4 bg-slate-100 rounded-lg"
+              >
+                <div className="flex-grow">
+                  <h2 className="text-lg">
+                    {recipe.title}
+                    {recipe.vegetarian && (
+                      <>
+                        &nbsp;
+                        <span className="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
+                          Vegetarian
+                        </span>
+                      </>
+                    )}
+                  </h2>
+                  <hr className="h-px my-2 bg-slate-300"></hr>
+                  <p className="text-sm">
+                    Preparation time:{" "}
+                    {recipe.preparationMinutes != -1
+                      ? `${recipe.preparationMinutes} minute${
+                          recipe.preparationMinutes > 1 ? "s" : ""
+                        }`
+                      : "Unlisted"}
+                  </p>
+                  <button
+                    className="mt-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={() => handleAddToFavorites(recipe)}
+                  >
+                    Add to Favorites
+                  </button>
+                </div>
+                <div className="flex-grow-0">
+                  {recipe.image ? (
+                    <img
+                      className="h-32 w-48  rounded-md object-cover rop-shadow-lg"
+                      src={recipe.image}
+                    ></img>
+                  ) : (
+                    <div className=" h-32 w-48 rounded-md bg-slate-200 flex flex-col justify-center text-center text-xs">
+                      No image available.
+                    </div>
                   )}
-                </h2>
-                <hr className="h-px my-2 bg-slate-300"></hr>
-                <p className="text-sm">
-                  Preparation time:{" "}
-                  {recipe.preparationMinutes != -1
-                    ? `${recipe.preparationMinutes} minute${
-                        recipe.preparationMinutes > 1 ? "s" : ""
-                      }`
-                    : "Unlisted"}
-                </p>
-                <button
-                  className="mt-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  onClick={() => handleAddToFavorites(recipe)}
-                >
-                  Add to Favorites
-                </button>
+                </div>
               </div>
-              <div className="flex-grow-0">
-                {recipe.image ? (
-                  <img
-                    className="h-32 w-48  rounded-md object-cover rop-shadow-lg"
-                    src={recipe.image}
-                  ></img>
-                ) : (
-                  <div className=" h-32 w-48 rounded-md bg-slate-200 flex flex-col justify-center text-center text-xs">
-                    No image available.
-                  </div>
-                )}
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="mt-3 italic text-slate-500">Loading...</p>
-        )}
-      </main>
-    </>
-  );
+            ))
+          ) : (
+            <p className="mt-3 italic text-slate-500">Loading...</p>
+          )}
+        </main>
+      </>
+    );
+  }
 }

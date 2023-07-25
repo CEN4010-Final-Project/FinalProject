@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 const NavBar = () => {
   return (
@@ -28,28 +29,28 @@ const NavBar = () => {
             <ul className="md:flex items-center justify-between text-base text-blue-600 pt-4 md:pt-0">
               <i className="fas fa-utensils mr-2"></i>
               <li>
-                <a
+                <Link
                   className="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2"
                   href="/"
                 >
                   Tastebudz
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   className="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2"
                   href="/recipes"
                 >
                   Recipes
-                </a>
+                </Link>
               </li>
               {/* <li>
-                <a
+                <Link
                   className="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2"
                   href="#"
                 >
                   Shell
-                </a>
+                </Link>
               </li> */}
             </ul>
           </nav>
