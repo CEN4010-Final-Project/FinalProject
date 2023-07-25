@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import SearchBar from "./Searchbar";
 
 const NavBar = () => {
   return (
@@ -43,6 +44,9 @@ const NavBar = () => {
                 >
                   Recipes
                 </Link>
+              </li>
+              <li >
+                <SearchBar />
               </li>
               {/* <li>
                 <Link
