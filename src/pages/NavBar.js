@@ -1,16 +1,22 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import authContext from "@/context/authContext";
 import Link from "next/link";
 import SearchBar from "./Searchbar";
+import { useRouter } from "next/router";
 
 const NavBar = () => {
   const ctx = useContext(authContext);
+  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState("");
   const authHandler = () => {
     if (ctx.user) {
       ctx.signOut();
     } else {
       ctx.signIn();
     }
+  };
+  const searchHandler = () => {
+    router.push(`/search/recipes?s=${searchTerm}`);
   };
   return (
     <nav id="header" className="w-full z-30 top-10 py-1 bg-yellow-200">
@@ -52,16 +58,8 @@ const NavBar = () => {
                 </Link>
               </li>
               <li>
-                <SearchBar />
+                <SearchBar value={searchTerm} setValue={setSearchTerm} onSearch={searchHandler}/>
               </li>
-              {/* <li>
-                <Link
-                  className="inline-block no-underline hover:text-black font-medium text-lg py-2 px-4 lg:-ml-2"
-                  href="#"
-                >
-                  Shell
-                </Link>
-              </li> */}
             </ul>
           </nav>
         </div>
