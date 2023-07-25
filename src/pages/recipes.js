@@ -1,40 +1,113 @@
 import Head from "next/head";
-import { useEffect, useState } from "react";
-import { Inter } from "next/font/google";
+import { useContext, useEffect, useState } from "react";
+import authContext from "@/context/authContext";
 import axios from "axios";
 
 
 const Recipes = () => {
+  const ctx = useContext(authContext);
   const [recipes, setRecipes] = useState([]);
 
   useEffect(() => {
     const getData = async () => {
-      const result = await fetch("../api/randomrecipes");
-      const newData = await result.json();
-      setRecipes(newData.recipes);
+      //get user's favorites
+      let userFavorites;
+      try {
+        const favoritesResponse = await axios.get("../api/favorites?action=list", {
+          headers: {
+            Authorization: ctx.user.uid
+          }
+        });
+  
+        if (favoritesResponse.status === 200) {
+          userFavorites = favoritesResponse.data;
+        }
+      } catch (err) {
+        if (err.response.status === 404) {
+          userFavorites = [];
+        } else {
+          console.log(err);
+        }
+      };
+     
+      const result = await axios.get("../api/randomrecipes");
+      result.data.recipes = result.data.recipes.map(recipe => ({...recipe, loading: false, favorite: userFavorites.find(f => f.recipe_id == recipe.id) !== undefined}));
+      setRecipes(result.data.recipes);
     };
     const timeout = setTimeout(getData, 100);
 
     return () => clearTimeout(timeout);
   }, []);
 
-  const handleAddToFavorites = async (recipe) => {
+  useEffect(() => {
+    console.log(recipes);
+  }, [recipes])
+
+  const toggleFavoriteHandler = (recipe) => {
+    if (recipe.favorite) {
+      deleteFavoriteHandler(recipe);
+    } else {
+      addFavoriteHandler(recipe);
+    }
+  }
+
+  const addFavoriteHandler = async (recipe) => {
+    const index = recipes.indexOf(recipe);
     try {
-      let user_id = Math.random();
-      const { id, title } = recipe; // Destructure the recipe object to get id and title
-      await axios.post("/api/favorites", {
-        user_id: user_id,
-        recipe_id: id,
-        title: title,
+      recipe.loading = true;
+      setRecipes(prevRecipes => {
+        prevRecipes[index] = recipe;
+        return prevRecipes;
       });
-      console.log(`Added recipe with ID ${id} to favorites`);
-      console.log(`Added recipe with TITLE ${title} to favorites`);
+      const response = await axios.post("/api/favorites", 
+      { recipe_id: recipe.id },
+      { headers: { Authorization: ctx.user.uid } }
+      );
+      if (response.status == 200) {
+        recipe.loading = false;
+        recipe.favorite = true;
+        setRecipes(prevRecipes => {
+          const recipes = prevRecipes.slice();
+          recipes[index] = recipe;
+          return recipes;
+        });
+      }
+      
       // You can display a success message or perform any other actions upon successful addition.
     } catch (error) {
       console.error("Error adding to favorites:", error);
       // Handle errors here or display an error message to the user.
     }
   };
+ 
+  const deleteFavoriteHandler = async (recipe) => {
+    const index = recipes.indexOf(recipe);
+    try {
+      recipe.loading = true;
+      setRecipes(prevRecipes => {
+        prevRecipes[index] = recipe;
+        return prevRecipes;
+      });
+      const response = await axios.delete(`/api/favorites?recipe_id=${recipe.id}`, {
+        headers: { Authorization: ctx.user.uid }
+      });
+      if (response.status == 200) {
+        recipe.loading = false;
+        recipe.favorite = false;
+        setRecipes(prevRecipes => {
+          const recipes = prevRecipes.slice();
+          recipes[index] = recipe;
+          return recipes;
+        });
+      }
+      
+      // You can display a success message or perform any other actions upon successful addition.
+    } catch (error) {
+      console.error("Error adding to favorites:", error);
+      // Handle errors here or display an error message to the user.
+    }
+  };
+
   return (
     <>
       <Head>
@@ -57,7 +130,7 @@ const Recipes = () => {
                   {recipe.vegetarian && (
                     <>
                       &nbsp;
-                      <span className="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
+                      <span className="bg-green-100 text-gre en-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
                         Vegetarian
                       </span>
                     </>
@@ -73,10 +146,11 @@ const Recipes = () => {
                     : "Unlisted"}
                 </p>
                 <button
-                  className="mt-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  onClick={() => handleAddToFavorites(recipe)}
+                  className={`mt-1 ${recipe.favorite ? "bg-red-600 hover:bg-red-700" : "bg-blue-600 hover:bg-blue-700"} text-white font-bold py-2 px-4 rounded`}
+                  disabled={recipe.loading ? "disabled" : ""}
+                  onClick={() => toggleFavoriteHandler(recipe)}
                 >
-                  Add to Favorites
+                  {recipe.favorite ? 'Remove from favorites' : 'Add to favorites'}
                 </button>
               </div>
               <div className="flex-grow-0">

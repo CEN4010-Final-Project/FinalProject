@@ -14,8 +14,7 @@ mongoose.connect(connectionURL, {
 const favoriteInfoSchema = new mongoose.Schema(
   {
     user_id: String,
-    recipe: String,
-    title: String,
+    recipe_id: String
   },
   { versionKey: false }
 );
@@ -29,18 +28,17 @@ try {
 
 export default async function handler(req, res) {
   const { method, query, body } = req;
+  const auth = req.headers.authorization
 
   switch (method) {
     case "POST":
       try {
         const favorite = new Favorite({
-          user_id: body.user_id,
-          recipe: body.recipe_id,
-          title: body.title,
+          user_id: auth,
+          recipe_id: body.recipe_id
         });
-        // console.log("Favorite Object:", favorite);
         await favorite.save();
-        console.log("Added Favorite", favorite.title);
+        console.log("Added Favorite", favorite);
         res.status(200).json({ message: "Favorite added" });
       } catch (error) {
         console.error(error);
@@ -51,8 +49,8 @@ export default async function handler(req, res) {
     case "DELETE":
       try {
         const favorite = await Favorite.findOneAndDelete({
-          user_id: query.user_id,
-          recipe: query.recipe,
+          user_id: auth,
+          recipe_id: query.recipe_id
         });
         if (favorite) {
           console.log("Deleted Favorite");
@@ -71,7 +69,7 @@ export default async function handler(req, res) {
         switch (query.action) {
           case "view":
             const favorite = await Favorite.findOne({
-              user_id: query.user_id,
+              user_id: auth,
               recipe: query.recipe,
             });
             if (favorite) {
@@ -85,10 +83,10 @@ export default async function handler(req, res) {
             break;
 
           case "list":
-            const favorites = await Favorite.find({ user_id: query.user_id });
+            const favorites = await Favorite.find({ user_id: auth });
             if (favorites.length > 0) {
               console.log("Viewing favorites");
-              res.status(200).json({ favorites });
+              res.status(200).json(favorites.map(f => f.recipe_id));
             } else {
               res.status(404).json({ message: "Favorites not found" });
             }

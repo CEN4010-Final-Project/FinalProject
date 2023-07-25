@@ -18,16 +18,21 @@ const LandingPage = () => {
 };
 
 const HomePage = () => {
-  return <>Welcome</>;
+
+  return <>Welcome
+   </>;
 };
 
 const index = () => {
   const ctx = useContext(authContext);
+ 
   if (ctx.loading) {
     return <>Loading...</>;
   }
+ 
 
   if (ctx.user) {
+    
     return <HomePage />;
   }
   return <LandingPage />;
