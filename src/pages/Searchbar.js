@@ -1,13 +1,13 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
-const SearchBar = ({ value, setValue, onSearch }) => {
+const SearchBar = ({ value, setValue, onSearch, className}) => {
   const keyDownHandler = (e) => {
     if (e.code === "Enter") {
       onSearch();
     }
   }
     return (
-      <div>
+      <div className={className}>
         <div className="relative">
           <div
             className="bg-transparent border-black focus-within:border-b-2 p-1"

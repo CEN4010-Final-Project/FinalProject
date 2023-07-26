@@ -51,14 +51,22 @@ const NavBar = () => {
               </li>
               <li>
                 <Link
-                  className="inline-block no-underline hover:text-black py-2 px-4 lg:-ml-2"
+                  className="inline-block no-underline hover:text-black py-2 px-3 lg:-ml-2"
                   href="/recipes"
                 >
                   Recipes
                 </Link>
               </li>
               <li>
-                <SearchBar value={searchTerm} setValue={setSearchTerm} onSearch={searchHandler}/>
+                <Link
+                  className="inline-block no-underline hover:text-black py-2 px-3 lg:-ml-2"
+                  href="/favorites"
+                >
+                  Favorites
+                </Link>
+              </li>
+              <li>
+                <SearchBar value={searchTerm} setValue={setSearchTerm} onSearch={searchHandler} className="ps-2"/>
               </li>
             </ul>
           </nav>

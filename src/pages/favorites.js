@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import authContext from "@/context/authContext";
 import axios from "axios";
 
-const Recipes = () => {
+const Favorites = () => {
   const ctx = useContext(authContext);
   const [recipes, setRecipes] = useState([]);
 
@@ -32,14 +32,33 @@ const Recipes = () => {
           }
         }
 
-        const result = await axios.get("../api/randomrecipes");
-        result.data.recipes = result.data.recipes.map((recipe) => ({
-          ...recipe,
-          loading: false,
-          favorite:
-            userFavorites.find((f) => f.recipe_id == recipe.id) !== undefined,
-        }));
-        setRecipes(result.data.recipes);
+        //get recipes from favorites
+        try {
+          console.log('test')
+          const result = await axios.get(
+            `../api/recipesbyid?s=${userFavorites.join(",")}`,
+            {
+              headers: {
+                Authorization: ctx.user.uid,
+              },
+            }
+          );
+          result.data = result.data.map((recipe) => ({
+            ...recipe,
+            loading: false,
+            favorite:
+              userFavorites.find((f) => f.recipe_id == recipe.id) !== undefined,
+          }));
+          result.data = result.data.map(recipe => ({...recipe, loading: false, favorite: true}))
+          setRecipes(result.data);
+        } catch (err) {
+          if (err?.response?.status === 404) {
+            setRecipes([]);
+          } else {
+            console.log(err);
+          }
+          
+        }
       }
     };
     const timeout = setTimeout(getData, 100);
@@ -129,7 +148,7 @@ const Recipes = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="container max-w-2xl mx-auto px-4">
-        <h1 className="text-3xl font-bold pt-3">Recipes</h1>
+        <h1 className="text-3xl font-bold pt-3">Favorites</h1>
         {recipes ? (
           recipes.map((recipe) => (
             <div
@@ -161,20 +180,20 @@ const Recipes = () => {
                   className={`mt-1 ${
                     recipe.favorite
                       ? "bg-red-600 hover:bg-red-700"
-                      : "bg-blue-600 hover:bg-blue-700"
+                      : "bg-gray-600 hover:bg-gray-700"
                   } text-white font-bold py-2 px-4 rounded`}
                   disabled={recipe.loading ? "disabled" : ""}
                   onClick={() => toggleFavoriteHandler(recipe)}
                 >
                   {recipe.favorite
-                    ? "Remove from favorites"
-                    : "Add to favorites"}
+                    ? "Delete from favorites"
+                    : "Undo deletion"}
                 </button>
               </div>
               <div className="flex-grow-0">
                 {recipe.image ? (
                   <img
-                    className="h-32 w-48  rounded-md object-cover drop-shadow-lg"
+                    className="h-32 w-48 rounded-md object-cover drop-shadow-lg"
                     src={recipe.image}
                   ></img>
                 ) : (
@@ -193,4 +212,4 @@ const Recipes = () => {
   );
 };
 
-export default Recipes;
+export default Favorites;
