@@ -20,14 +20,22 @@ export const AuthContextProvider = ({ children }) => {
   const [user, loading, error] = useAuthState(auth);
 
   const signIn = async () => {
-    const result = await signInWithPopup(auth, provider);
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (err) {
+      if (err.code !== "auth/cancelled-popup-request" && err.code !== "auth/popup-closed-by-user") {
+        console.error(err)
+      }
+    }
+    
   };
 
   const signOutRename = async () => {
     await signOut(auth);
   };
   useEffect(() => {
-    if (!user) 
+
+    if (!loading && !user) 
       router.push("/")
   }, [user])
 

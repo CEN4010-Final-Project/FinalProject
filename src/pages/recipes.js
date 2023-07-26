@@ -10,34 +10,35 @@ const Recipes = () => {
 
   useEffect(() => {
     const getData = async () => {
-      //get user's favorites
-      let userFavorites;
-      try {
-        const favoritesResponse = await axios.get("../api/favorites?action=list", {
-          headers: {
-            Authorization: ctx.user.uid
+      if (!ctx.loading) {
+        //get user's favorites
+        let userFavorites;
+        try {
+          const favoritesResponse = await axios.get("../api/favorites?action=list", {
+            headers: {
+              Authorization: ctx.user.uid
+            }
+          });
+          if (favoritesResponse.status === 200) {
+            userFavorites = favoritesResponse.data;
           }
-        });
-  
-        if (favoritesResponse.status === 200) {
-          userFavorites = favoritesResponse.data;
-        }
-      } catch (err) {
-        if (err.response.status === 404) {
-          userFavorites = [];
-        } else {
-          console.log(err);
-        }
-      };
-     
-      const result = await axios.get("../api/randomrecipes");
-      result.data.recipes = result.data.recipes.map(recipe => ({...recipe, loading: false, favorite: userFavorites.find(f => f.recipe_id == recipe.id) !== undefined}));
-      setRecipes(result.data.recipes);
+        } catch (err) {
+          if (err?.response?.status === 404) {
+            userFavorites = [];
+          } else {
+            console.log(err);
+          }
+        };
+        
+        const result = await axios.get("../api/randomrecipes");
+        result.data.recipes = result.data.recipes.map(recipe => ({...recipe, loading: false, favorite: userFavorites.find(f => f.recipe_id == recipe.id) !== undefined}));
+        setRecipes(result.data.recipes);
+      }
     };
     const timeout = setTimeout(getData, 100);
 
     return () => clearTimeout(timeout);
-  }, []);
+  }, [ctx.loading]);
 
   useEffect(() => {
     console.log(recipes);
