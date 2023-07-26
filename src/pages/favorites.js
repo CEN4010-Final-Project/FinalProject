@@ -2,7 +2,7 @@ import Head from "next/head";
 import { useContext, useEffect, useState } from "react";
 import authContext from "@/context/authContext";
 import axios from "axios";
-
+import RecipeList from "@/components/RecipeList";
 const Favorites = () => {
   const ctx = useContext(authContext);
   const [recipes, setRecipes] = useState(null);
@@ -151,60 +151,7 @@ const Favorites = () => {
         <h1 className="text-3xl font-bold pt-3">Favorites</h1>
         {recipes ? (
           recipes.length ? (
-            recipes.map((recipe) => (
-              <div
-                key={recipe.id}
-                className="flex gap-x-6 mt-3 p-4 bg-slate-100 rounded-lg"
-              >
-                <div className="flex-grow">
-                  <h2 className="text-lg">
-                    {recipe.title}
-                    {recipe.vegetarian && (
-                      <>
-                        &nbsp;
-                        <span className="bg-green-100 text-gre en-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
-                          Vegetarian
-                        </span>
-                      </>
-                    )}
-                  </h2>
-                  <hr className="h-px my-2 bg-slate-300"></hr>
-                  <p className="text-sm">
-                    Preparation time:{" "}
-                    {recipe.preparationMinutes != -1
-                      ? `${recipe.preparationMinutes} minute${
-                          recipe.preparationMinutes > 1 ? "s" : ""
-                        }`
-                      : "Unlisted"}
-                  </p>
-                  <button
-                    className={`mt-5 ${
-                      recipe.favorite
-                        ? "bg-red-600 hover:bg-red-700"
-                        : "bg-blue-600 hover:bg-blue-700"
-                    } text-white font-bold py-2 px-4 rounded`}
-                    disabled={recipe.loading ? "disabled" : ""}
-                    onClick={() => toggleFavoriteHandler(recipe)}
-                  >
-                    {recipe.favorite
-                      ? "Remove from favorites"
-                      : "Undo removal"}
-                  </button>
-                </div>
-                <div className="flex-grow-0">
-                  {recipe.image ? (
-                    <img
-                      className="h-32 w-48  rounded-md object-cover drop-shadow-lg"
-                      src={recipe.image}
-                    ></img>
-                  ) : (
-                    <div className=" h-32 w-48 rounded-md bg-slate-200 flex flex-col justify-center text-center text-xs">
-                      No image available.
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))
+            <RecipeList recipes={recipes} onToggleFavorite={toggleFavoriteHandler}></RecipeList>
           ) : (
             <p className="pt-4">No favorites found. If you should have favorites, please try again.</p>
           )
