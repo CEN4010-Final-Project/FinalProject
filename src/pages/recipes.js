@@ -2,10 +2,12 @@ import { useContext, useEffect, useState } from "react";
 import authContext from "@/context/authContext";
 import axios from "axios";
 import RecipeList from "@/components/RecipeList";
+import Error from "@/components/UI/Error";
 
 const Recipes = () => {
   const ctx = useContext(authContext);
   const [recipes, setRecipes] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const getData = async () => {
@@ -28,25 +30,28 @@ const Recipes = () => {
           if (err?.response?.status === 404) {
             userFavorites = [];
           } else {
-            console.log(err);
+            setError(err);
           }
         }
-
-        const result = await axios.get("../api/randomrecipes");
-        result.data.recipes = result.data.recipes.map((recipe) => ({
-          ...recipe,
-          loading: false,
-          favorite:
-            userFavorites.find((f) => f.recipe_id == recipe.id) !== undefined,
-        }));
-        setRecipes(result.data.recipes);
+        // get random recipes
+        try {
+          const result = await axios.get("../api/randomrecipes");
+          result.data.recipes = result.data.recipes.map((recipe) => ({
+            ...recipe,
+            loading: false,
+            favorite: userFavorites.find((f) => f.recipe_id == recipe.id) !== undefined,
+          }));
+          setRecipes(result.data.recipes);
+        } catch (err) {
+          setError(err);
+        }
       }
     };
     const timeout = setTimeout(getData, 100);
 
     return () => clearTimeout(timeout);
   }, [ctx.loading]);
-  
+
   const toggleFavoriteHandler = (recipe) => {
     if (recipe.favorite) {
       deleteFavoriteHandler(recipe);
@@ -120,15 +125,18 @@ const Recipes = () => {
     <>
       <div className="container max-w-2xl mx-auto px-4">
         <h1 className="text-3xl font-bold pt-3">Recipes</h1>
-        {recipes ? (
-          recipes.length ? (
-            <RecipeList recipes={recipes} onToggleFavorite={toggleFavoriteHandler}/>
+        {error ? <Error error={error} /> : 
+          recipes ? (
+            recipes.length ? (
+              <RecipeList recipes={recipes} onToggleFavorite={toggleFavoriteHandler}/>
+            ) : (
+              <p className="pt-4">No recipes found. Please try again.</p>
+            )
           ) : (
-            <p className="pt-4">No recipes found. Please try again.</p>
+            <p className="mt-3 italic text-slate-500">Loading...</p>
           )
-        ) : (
-          <p className="mt-3 italic text-slate-500">Loading...</p>
-        )}
+        }
+        
       </div>
     </>
   );

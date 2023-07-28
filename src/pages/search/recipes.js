@@ -3,15 +3,20 @@ import authContext from "@/context/authContext";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
-import Recipe from "@/components/Recipe";
+import RecipeList from "@/components/RecipeList";
+import Error from "@/components/UI/Error";
 
 const Recipes = () => {
   const ctx = useContext(authContext);
-  const [recipes, setRecipes] = useState(null);
+  const router = useRouter();
+
   const searchParams = useSearchParams();
   const search = searchParams.get("s");
+
+  const [recipes, setRecipes] = useState(null);
   const [searchTerm, setSearchTerm] = useState(search ? search : "");
-  const router = useRouter();
+  const [error, setError] = useState(null);
+ 
 
   useEffect(() => {
     const searchTermHandler = () => {
@@ -24,6 +29,7 @@ const Recipes = () => {
   }, [router.query]);
   useEffect(() => {
     const getData = async () => {
+      setRecipes(null);
       if (!searchTerm) {
         setRecipes([]);
         return;
@@ -52,14 +58,18 @@ const Recipes = () => {
         }
 
         // get recipes by search term
-        const result = await axios.get(`../api/recipes/name?s=${search}`);
-        result.data.results = result.data.results.map((recipe) => ({
-          ...recipe,
-          loading: false,
-          favorite:
-            userFavorites.find((f) => f.recipe_id == recipe.id) !== undefined,
-        }));
-        setRecipes(result.data.results);
+        try {
+          const result = await axios.get(`../api/recipes/name?s=${search}`);
+          result.data.results = result.data.results.map((recipe) => ({
+            ...recipe,
+            loading: false,
+            favorite:
+              userFavorites.find((f) => f.recipe_id == recipe.id) !== undefined,
+          }));
+          setRecipes(result.data.results);
+        } catch (err) {
+          setError(err);
+        }
       }
     };
     const timeout = setTimeout(getData, 100);
@@ -140,73 +150,17 @@ const Recipes = () => {
     <>
       <div className="container max-w-2xl mx-auto px-4">
         <h1 className="text-3xl font-bold pt-3">Results for '{searchTerm}'</h1>
-        {recipes ? (
-          recipes.length ? (
-            recipes.map((recipe) => (
-              <div
-                key={recipe.id}
-                className="flex gap-x-6 mt-3 p-4 bg-slate-100 rounded-lg"
-              >
-                <div className="flex-grow">
-                  <h2 className="text-lg">
-                    {recipe.title}
-                    {recipe.vegetarian && (
-                      <>
-                        &nbsp;
-                        <span className="bg-green-100 text-gre en-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
-                          Vegetarian
-                        </span>
-                      </>
-                    )}
-                  </h2>
-                  <hr className="h-px my-2 bg-slate-300"></hr>
-                  <p className="text-sm">
-                    Preparation time:{" "}
-                    {recipe.preparationMinutes != -1
-                      ? `${recipe.preparationMinutes} minute${
-                          recipe.preparationMinutes > 1 ? "s" : ""
-                        }`
-                      : "Unlisted"}
-                  </p>
-                  <button
-                    className={`mt-1 ${
-                      recipe.favorite
-                        ? "bg-red-600 hover:bg-red-700"
-                        : "bg-blue-600 hover:bg-blue-700"
-                    } text-white font-bold py-2 px-4 rounded`}
-                    disabled={recipe.loading ? "disabled" : ""}
-                    onClick={() => toggleFavoriteHandler(recipe)}
-                  >
-                    {recipe.favorite
-                      ? "Remove from favorites"
-                      : "Add to favorites"}
-                  </button>
-                </div>
-                <div className="flex-grow-0">
-                  {recipe.image ? (
-                    <img
-                      className="h-32 w-48  rounded-md object-cover drop-shadow-lg"
-                      src={recipe.image}
-                    ></img>
-                  ) : (
-                    <div className=" h-32 w-48 rounded-md bg-slate-200 flex flex-col justify-center text-center text-xs">
-                      No image available.
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))
-          ) : (
-            searchTerm == '' ? (
-              <p className="pt-4">No search term entered. Please try again.</p>
+        {error ? <Error error={error} /> : 
+          recipes ? (
+            recipes.length ? (
+              <RecipeList recipes={recipes} onToggleFavorite={toggleFavoriteHandler}></RecipeList>
             ) : (
-              <p className="pt-4">No recipes found. Check your search term and try again.</p>
+              <p className="pt-4">No favorites found. If you should have favorites, please try again.</p>
             )
-          )
-        ) : (
-          <p className="mt-3 italic text-slate-500">Loading...</p>
-        )}
-      </div>
+          ) : (
+            <p className="mt-3 italic text-slate-500">Loading...</p>
+          )}
+     </div>
     </>
   );
 };

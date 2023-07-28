@@ -1,10 +1,6 @@
-// pages/api/favorite.js
-
-// import { MongoClient } from "mongodb";
 import mongoose from "mongoose";
 
 const connectionURL = process.env.DB_URI; // Replace with your MongoDB connection URL
-// const dbName = "<your-database-name>"; // Replace with your MongoDB database name
 
 mongoose.connect(connectionURL, {
   useNewUrlParser: true,

@@ -51,7 +51,7 @@ const NavBar = () => {
               </li>
               <li>
                 <Link
-                  className="inline-block no-underline hover:text-black py-2 px-3 lg:-ml-2"
+                  className="inline-block no-underline hover:text-black py-2 px-3 lg:-ml-2 border-black hover:border-b-2"
                   href="/recipes"
                 >
                   Recipes
@@ -59,7 +59,7 @@ const NavBar = () => {
               </li>
               <li>
                 <Link
-                  className="inline-block no-underline hover:text-black py-2 px-3 lg:-ml-2"
+                  className="inline-block no-underline hover:text-black py-2 px-3 lg:-ml-2 border-black hover:border-b-2"
                   href="/favorites"
                 >
                   Favorites
