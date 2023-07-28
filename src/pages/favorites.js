@@ -40,7 +40,7 @@ const Favorites = () => {
             `../api/recipesbyid?s=${userFavorites.join(",")}`,
             {
               headers: {
-                Authorization: ctx.user.uid,
+                Authorization: ctx.user.uid
               },
             }
           );

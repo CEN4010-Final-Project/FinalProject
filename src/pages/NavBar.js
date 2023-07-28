@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState} from "react";
 import authContext from "@/context/authContext";
 import Link from "next/link";
 import SearchBar from "./Searchbar";
@@ -15,6 +15,10 @@ const NavBar = () => {
       ctx.signIn();
     }
   };
+  useEffect(() => {
+    if (router.pathname == "/search/recipes" && router.query.s)
+      setSearchTerm(router.query.s);
+  }, [router.query])
   const searchHandler = () => {
     router.push(`/search/recipes?s=${searchTerm}`);
   };

@@ -24,7 +24,7 @@ try {
 
 export default async function handler(req, res) {
   const { method, query, body } = req;
-  const auth = req.headers.authorization
+  const auth = req.headers.authorization;
 
   switch (method) {
     case "POST":
@@ -81,7 +81,6 @@ export default async function handler(req, res) {
           case "list":
             const favorites = await Favorite.find({ user_id: auth });
             if (favorites.length > 0) {
-              console.log("Viewing favorites");
               res.status(200).json(favorites.map(f => f.recipe_id));
             } else {
               res.status(404).json({ message: "Favorites not found" });
@@ -91,13 +90,12 @@ export default async function handler(req, res) {
           default:
             res.status(400).json({ message: "Invalid action" });
             break;
-        }
+        }     
       } catch (error) {
-        console.error(error);
         res.status(500).json({ message: "Error viewing favorites" });
-      }
+      }    
       break;
-
+      
     default:
       res.setHeader("Allow", ["POST", "DELETE", "GET"]);
       res.status(405).end(`Method ${method} Not Allowed`);

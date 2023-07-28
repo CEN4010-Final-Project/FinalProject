@@ -4,10 +4,8 @@ const Recipe = ({ recipe, onToggleFavorite, page }) => {
   const heading = useRef(null);
   const [headingOneLine, setHeadingOneLine] = useState(false);
   useEffect(() => {
-    if (heading.current) {
+    if (heading.current) 
       setHeadingOneLine(heading.current.clientHeight <= 28);
-      console.log(heading.current.clientHeight);
-    }
   }, [heading]);
 
   return (

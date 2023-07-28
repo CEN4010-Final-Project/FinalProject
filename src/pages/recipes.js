@@ -27,6 +27,8 @@ const Recipes = () => {
             userFavorites = favoritesResponse.data;
           }
         } catch (err) {
+          userFavorites = [];
+
           if (err?.response?.status === 404) {
             userFavorites = [];
           } else {
@@ -35,13 +37,14 @@ const Recipes = () => {
         }
         // get random recipes
         try {
+          
           const result = await axios.get("../api/randomrecipes");
-          result.data.recipes = result.data.recipes.map((recipe) => ({
+          result.data = result.data.map((recipe) => ({
             ...recipe,
             loading: false,
             favorite: userFavorites.find((f) => f.recipe_id == recipe.id) !== undefined,
           }));
-          setRecipes(result.data.recipes);
+          setRecipes(result.data);
         } catch (err) {
           setError(err);
         }

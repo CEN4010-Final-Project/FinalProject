@@ -10,11 +10,8 @@ const Recipes = () => {
   const ctx = useContext(authContext);
   const router = useRouter();
 
-  const searchParams = useSearchParams();
-  const search = searchParams.get("s");
-
   const [recipes, setRecipes] = useState(null);
-  const [searchTerm, setSearchTerm] = useState(search ? search : "");
+  const [searchTerm, setSearchTerm] = useState(null);
   const [error, setError] = useState(null);
  
 
@@ -22,14 +19,17 @@ const Recipes = () => {
     const searchTermHandler = () => {
       setSearchTerm(router.query.s);
     };
+    searchTermHandler();
     router.events.on("routeChangeComplete", searchTermHandler);
     return () => {
       router.events.off("routeChangeComplete", searchTermHandler);
     };
-  }, [router.query]);
+  }, [ctx.loading, router.query]);
+
   useEffect(() => {
     const getData = async () => {
       setRecipes(null);
+
       if (!searchTerm) {
         setRecipes([]);
         return;
@@ -49,7 +49,7 @@ const Recipes = () => {
           if (favoritesResponse.status === 200) {
             userFavorites = favoritesResponse.data;
           }
-        } catch (err) {
+        } catch (err) {  
           if (err?.response?.status === 404) {
             userFavorites = [];
           } else {
@@ -59,7 +59,7 @@ const Recipes = () => {
 
         // get recipes by search term
         try {
-          const result = await axios.get(`../api/recipes/name?s=${search}`);
+          const result = await axios.get(`../api/recipes/name?s=${searchTerm}`);
           result.data.results = result.data.results.map((recipe) => ({
             ...recipe,
             loading: false,
@@ -72,9 +72,7 @@ const Recipes = () => {
         }
       }
     };
-    const timeout = setTimeout(getData, 100);
-
-    return () => clearTimeout(timeout);
+    getData();
   }, [ctx.loading, searchTerm]);
 
   const toggleFavoriteHandler = (recipe) => {
@@ -155,7 +153,7 @@ const Recipes = () => {
             recipes.length ? (
               <RecipeList recipes={recipes} onToggleFavorite={toggleFavoriteHandler}></RecipeList>
             ) : (
-              <p className="pt-4">No favorites found. If you should have favorites, please try again.</p>
+              <p className="pt-4">No recipes found. Please check your search query and try again.</p>
             )
           ) : (
             <p className="mt-3 italic text-slate-500">Loading...</p>
