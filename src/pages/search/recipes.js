@@ -1,16 +1,16 @@
-import Head from "next/head";
 import { useContext, useEffect, useState } from "react";
 import authContext from "@/context/authContext";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
+import Recipe from "@/components/Recipe";
 
 const Recipes = () => {
   const ctx = useContext(authContext);
   const [recipes, setRecipes] = useState(null);
   const searchParams = useSearchParams();
   const search = searchParams.get("s");
-  const [searchTerm, setSearchTerm] = useState(search ? search : '');
+  const [searchTerm, setSearchTerm] = useState(search ? search : "");
   const router = useRouter();
 
   useEffect(() => {
@@ -66,10 +66,6 @@ const Recipes = () => {
 
     return () => clearTimeout(timeout);
   }, [ctx.loading, searchTerm]);
-
-  useEffect(() => {
-    console.log(recipes);
-  }, [recipes]);
 
   const toggleFavoriteHandler = (recipe) => {
     if (recipe.favorite) {
@@ -142,12 +138,6 @@ const Recipes = () => {
 
   return (
     <>
-      <Head>
-        <title>TasteBudz</title>
-        <meta name="description" content="Online recipe service" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <div className="container max-w-2xl mx-auto px-4">
         <h1 className="text-3xl font-bold pt-3">Results for '{searchTerm}'</h1>
         {recipes ? (

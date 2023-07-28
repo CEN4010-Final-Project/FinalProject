@@ -1,4 +1,3 @@
-import Head from "next/head";
 import { useContext, useEffect, useState } from "react";
 import authContext from "@/context/authContext";
 import axios from "axios";
@@ -34,7 +33,6 @@ const Favorites = () => {
 
         //get recipes from favorites
         try {
-          console.log('test')
           const result = await axios.get(
             `../api/recipesbyid?s=${userFavorites.join(",")}`,
             {
@@ -65,10 +63,6 @@ const Favorites = () => {
 
     return () => clearTimeout(timeout);
   }, [ctx.loading]);
-
-  useEffect(() => {
-    console.log(recipes);
-  }, [recipes]);
 
   const toggleFavoriteHandler = (recipe) => {
     if (recipe.favorite) {
@@ -141,12 +135,6 @@ const Favorites = () => {
 
   return (
     <>
-      <Head>
-        <title>TasteBudz</title>
-        <meta name="description" content="Online recipe service" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <div className="container max-w-2xl mx-auto px-4">
         <h1 className="text-3xl font-bold pt-3">Favorites</h1>
         {recipes ? (
