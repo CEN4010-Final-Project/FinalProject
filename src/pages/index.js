@@ -5,34 +5,31 @@ import Link from "next/link";
 const LandingPage = () => {
   const ctx = useContext(authContext);
   return (
-    <div>
-      <div className="py-24 sm:py-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-black sm:text-6xl">
-              Welcome {ctx.user ? ctx.user.displayName : ""} to TasteBudz
-            </h1>
-            <p className="mt-6 text-lg leading-8 text-black ">
-              TasteBudz is a premium recipe application that revolutionizes how
-              you discover, cook, save favorite dishes. Powered by spoonacular's
-              extensive recipe library, we enable cooking enthusiasts to spark
-              creativity in the kitchen and turn every meal into a delightful
-              culinary adventure.
-            </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              <button
-                className="transition rounded-md bg-slate-800 text-white px-4 py-3
-                font-semibold hover:bg-yellow-200 hover:text-black"
-                type="button"
-                onClick={ctx.signIn}
-              >
-                Sign In
-              </button>
-            </div>
-          </div>
+
+
+      <div className="py-16 py-sm:24 mx-auto px-6 lg:px-8 text-center">
+        <h1 className="text-4xl font-bold tracking-tight text-black sm:text-6xl">
+          Welcome {ctx.user ? ctx.user.displayName : ""} to TasteBudz
+        </h1>
+        <p className="mt-6 text-lg leading-8 text-black ">
+          TasteBudz is a premium recipe application that revolutionizes how
+          you discover, cook, save favorite dishes. Powered by spoonacular's
+          extensive recipe library, we enable cooking enthusiasts to spark
+          creativity in the kitchen and turn every meal into a delightful
+          culinary adventure.
+        </p>
+        <div className="mt-6 flex items-center justify-center gap-x-6">
+          <button
+            className="transition rounded-md bg-slate-800 text-white px-4 py-3
+            font-semibold hover:bg-yellow-200 hover:text-black"
+            type="button"
+            onClick={ctx.signIn}
+          >
+            Sign In
+          </button>
         </div>
       </div>
-    </div>
+
   );
 };
 

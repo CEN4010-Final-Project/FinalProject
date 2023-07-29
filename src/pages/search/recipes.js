@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import authContext from "@/context/authContext";
 import axios from "axios";
-import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import RecipeList from "@/components/RecipeList";
+import Filters from "../../components/RecipeNameFilters";
 import Error from "@/components/UI/Error";
 
 const Recipes = () => {
@@ -13,7 +13,12 @@ const Recipes = () => {
   const [recipes, setRecipes] = useState(null);
   const [searchTerm, setSearchTerm] = useState(null);
   const [error, setError] = useState(null);
- 
+  const [filters, setFilters] = useState({
+    type: [],
+    intolerances: [],
+    cuisines: [],
+    diets: []
+  });
 
   useEffect(() => {
     const searchTermHandler = () => {
@@ -58,22 +63,26 @@ const Recipes = () => {
         }
 
         // get recipes by search term
-        try {
-          const result = await axios.get(`../api/recipes/name?s=${searchTerm}`);
-          result.data.results = result.data.results.map((recipe) => ({
+        try { 
+          let requestURL = `../api/recipes/name?s=${searchTerm}`;
+          Object.keys(filters).forEach(filter => {
+            requestURL += `&${filter}=${filters[filter].join(",")}`
+          })
+          const result = await axios.get(requestURL);
+          result.data = result.data.map((recipe) => ({
             ...recipe,
             loading: false,
             favorite:
               userFavorites.find((f) => f.recipe_id == recipe.id) !== undefined,
           }));
-          setRecipes(result.data.results);
+          setRecipes(result.data)
         } catch (err) {
           setError(err);
         }
       }
     };
     getData();
-  }, [ctx.loading, searchTerm]);
+  }, [ctx.loading, searchTerm, filters]);
 
   const toggleFavoriteHandler = (recipe) => {
     if (recipe.favorite) {
@@ -146,19 +155,20 @@ const Recipes = () => {
 
   return (
     <>
-      <div className="container max-w-2xl mx-auto px-4">
-        <h1 className="text-3xl font-bold pt-3">Results for '{searchTerm}'</h1>
-        {error ? <Error error={error} /> : 
-          recipes ? (
-            recipes.length ? (
-              <RecipeList recipes={recipes} onToggleFavorite={toggleFavoriteHandler}></RecipeList>
-            ) : (
-              <p className="pt-4">No recipes found. Please check your search query and try again.</p>
-            )
+      <h1 className="text-3xl font-bold pt-3">Results for '{searchTerm}'</h1>
+      {error ? <Error error={error} /> : 
+        <>
+          <Filters onChange={(f) => setFilters(f)} />
+        {recipes ? (
+          recipes.length ? (
+            <RecipeList recipes={recipes} onToggleFavorite={toggleFavoriteHandler}></RecipeList>
           ) : (
-            <p className="mt-3 italic text-slate-500">Loading...</p>
-          )}
-     </div>
+            <p className="pt-4">No recipes found. Please check your search query and try again.</p>
+          )
+        ) : (
+          <p className="mt-3 italic text-slate-500">Loading...</p>
+        )}
+      </>}
     </>
   );
 };

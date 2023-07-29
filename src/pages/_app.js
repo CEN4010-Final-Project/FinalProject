@@ -18,7 +18,9 @@ export default function App({ Component, pageProps }) {
       <Metadata />
       <main className={inter.className}>
         <NavBar />
-        <Component {...pageProps} />
+        <div className="container max-w-3xl mx-auto pt-10">
+          <Component {...pageProps} />
+        </div>
       </main>
     </AuthContextProvider>
   );
