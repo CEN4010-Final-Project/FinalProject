@@ -40,7 +40,7 @@ const Favorites = () => {
             `../api/recipesbyid?s=${userFavorites.join(",")}`,
             {
               headers: {
-                Authorization: ctx.user.uid
+                Authorization: ctx.user.uid,
               },
             }
           );
@@ -50,7 +50,11 @@ const Favorites = () => {
             favorite:
               userFavorites.find((f) => f.recipe_id == recipe.id) !== undefined,
           }));
-          result.data = result.data.map(recipe => ({...recipe, loading: false, favorite: true}))
+          result.data = result.data.map((recipe) => ({
+            ...recipe,
+            loading: false,
+            favorite: true,
+          }));
           setRecipes(result.data);
         } catch (err) {
           setError(err);
@@ -92,11 +96,8 @@ const Favorites = () => {
           return recipes;
         });
       }
-
-      // You can display a success message or perform any other actions upon successful addition.
-    } catch (error) {
-      console.error("Error adding to favorites:", error);
-      // Handle errors here or display an error message to the user.
+    } catch (err) {
+      setError(err);
     }
   };
 
@@ -123,29 +124,30 @@ const Favorites = () => {
           return recipes;
         });
       }
-
-      // You can display a success message or perform any other actions upon successful addition.
-    } catch (error) {
-      console.error("Error adding to favorites:", error);
-      // Handle errors here or display an error message to the user.
+    } catch (err) {
+      setError(err);
     }
   };
 
   return (
     <>
-      <div className="container max-w-2xl mx-auto px-4">
-        <h1 className="text-3xl font-bold pt-3">Favorites</h1>
-        {error ? <Error error={error} /> : 
-          recipes ? (
-            recipes.length ? (
-              <RecipeList recipes={recipes} onToggleFavorite={toggleFavoriteHandler}></RecipeList>
-            ) : (
-              <p className="pt-4">No favorites found. If you should have favorites, please try again.</p>
-            )
-          ) : (
-            <p className="mt-3 italic text-slate-500">Loading...</p>
-          )}
-      </div>
+      <h1 className="text-3xl font-bold pt-3">Favorites</h1>
+      {error ? (
+        <Error error={error} />
+      ) : recipes ? (
+        recipes.length ? (
+          <RecipeList
+            recipes={recipes}
+            onToggleFavorite={toggleFavoriteHandler}
+          ></RecipeList>
+        ) : (
+          <p className="pt-4">
+            No favorites found. If you should have favorites, please try again.
+          </p>
+        )
+      ) : (
+        <p className="mt-3 italic text-slate-500">Loading...</p>
+      )}
     </>
   );
 };

@@ -37,12 +37,12 @@ const Recipes = () => {
         }
         // get random recipes
         try {
-          
           const result = await axios.get("../api/randomrecipes");
           result.data = result.data.map((recipe) => ({
             ...recipe,
             loading: false,
-            favorite: userFavorites.find((f) => f.recipe_id == recipe.id) !== undefined,
+            favorite:
+              userFavorites.find((f) => f.recipe_id == recipe.id) !== undefined,
           }));
           setRecipes(result.data);
         } catch (err) {
@@ -85,11 +85,8 @@ const Recipes = () => {
           return recipes;
         });
       }
-
-      // You can display a success message or perform any other actions upon successful addition.
-    } catch (error) {
-      console.error("Error adding to favorites:", error);
-      // Handle errors here or display an error message to the user.
+    } catch (err) {
+      setError(err);
     }
   };
 
@@ -116,31 +113,28 @@ const Recipes = () => {
           return recipes;
         });
       }
-
-      // You can display a success message or perform any other actions upon successful addition.
     } catch (error) {
-      console.error("Error adding to favorites:", error);
-      // Handle errors here or display an error message to the user.
+      setError(err);
     }
   };
 
   return (
     <>
-      <div className="container max-w-2xl mx-auto px-4">
-        <h1 className="text-3xl font-bold pt-3">Recipes</h1>
-        {error ? <Error error={error} /> : 
-          recipes ? (
-            recipes.length ? (
-              <RecipeList recipes={recipes} onToggleFavorite={toggleFavoriteHandler}/>
-            ) : (
-              <p className="pt-4">No recipes found. Please try again.</p>
-            )
-          ) : (
-            <p className="mt-3 italic text-slate-500">Loading...</p>
-          )
-        }
-        
-      </div>
+      <h1 className="text-3xl font-bold pt-3">Recipes</h1>
+      {error ? (
+        <Error error={error} />
+      ) : recipes ? (
+        recipes.length ? (
+          <RecipeList
+            recipes={recipes}
+            onToggleFavorite={toggleFavoriteHandler}
+          />
+        ) : (
+          <p className="pt-4">No recipes found. Please try again.</p>
+        )
+      ) : (
+        <p className="mt-3 italic text-slate-500">Loading...</p>
+      )}
     </>
   );
 };
