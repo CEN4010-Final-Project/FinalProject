@@ -11,7 +11,7 @@ const Recipe = ({ recipe, onToggleFavorite, page }) => {
   return (
     <div
       key={recipe.id}
-      className="max-w-full flex flex-col-reverse md:flex-row gap-x-6 mt-3 p-4 bg-slate-100 rounded-lg"
+      className="max-w-full flex flex-col-reverse md:flex-row gap-x-6 p-4 bg-slate-100 rounded-lg"
     >
       <div className="overflow-auto flex-grow relative">
         <div className="pt-3 md:pt-0" ref={heading}>

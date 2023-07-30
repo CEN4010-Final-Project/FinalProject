@@ -10,7 +10,7 @@ const Navbar = () => {
   const ctx = useContext(authContext);
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
-  const [menuCollapse, setMenuCollapse] = useState(false);
+  const [menuCollapse, setMenuCollapse] = useState(true);
   const authHandler = () => {
     if (ctx.user) {
       ctx.signOut();
