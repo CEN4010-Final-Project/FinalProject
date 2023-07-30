@@ -9,7 +9,7 @@ import {
 
 const RecipeBadges = ({ className, recipe }) => {
   return (
-    <div className={`${className} flex gap-3 mt-2`}>
+    <div className={`${className} flex flex-wrap gap-3 mt-2`}>
       {recipe.vegetarian && (
         <span className="bg-green-200 text-green-900 tracking-tight font-medium text-sm px-2.5 py-0.5 rounded">
           <FontAwesomeIcon icon={faLeaf} className="text-xs" />{" "}

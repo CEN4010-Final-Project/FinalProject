@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import RecipeBadges from "./RecipeBadges";
 
 const Recipe = ({ recipe, onToggleFavorite, page }) => {
-  recipe.veryPopular = true;
   const heading = useRef(null);
   const [headingOneLine, setHeadingOneLine] = useState(false);
   useEffect(() => {
