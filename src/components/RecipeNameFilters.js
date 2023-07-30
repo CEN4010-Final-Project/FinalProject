@@ -47,7 +47,7 @@ const RecipeNameFilters = ({ onChange }) => {
           onClick={propagateFilters}
         >Apply</button>
       </div>
-      <div className="flex gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {Object.keys(options).map((option) => (
           <MultiSelect
             key={option}

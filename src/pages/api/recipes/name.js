@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   try {
-    let URL = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.API_KEY}&query=${req.query.s}`
+    let URL = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.API_KEY}&query=${req.query.s}&addRecipeInformation=true`
     if (req.query.cuisines)
       URL += "&cuisine=" + req.query.cuisines
       if (req.query.diet)

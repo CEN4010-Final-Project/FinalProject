@@ -1,62 +1,56 @@
 import { useEffect, useRef, useState } from "react";
+import RecipeBadges from "./RecipeBadges";
 
 const Recipe = ({ recipe, onToggleFavorite, page }) => {
+  recipe.veryPopular = true;
   const heading = useRef(null);
   const [headingOneLine, setHeadingOneLine] = useState(false);
   useEffect(() => {
-    if (heading.current) 
-      setHeadingOneLine(heading.current.clientHeight <= 28);
+    if (heading.current) setHeadingOneLine(heading.current.clientHeight <= 28);
   }, [heading]);
 
   return (
     <div
       key={recipe.id}
-      className="flex gap-x-6 mt-3 p-4 bg-slate-100 rounded-lg"
+      className="max-w-full flex flex-col-reverse md:flex-row gap-x-6 mt-3 p-4 bg-slate-100 rounded-lg"
     >
-      <div className="flex-grow">
-        <div ref={heading}>
-          <h2 className="text-lg font-semibold" ref={heading}>
+      <div className="overflow-auto flex-grow relative">
+        <div className="pt-3 md:pt-0" ref={heading}>
+          <h2
+            className="block text-ellipsis whitespace-nowrap overflow-hidden text-lg font-semibold"
+            ref={heading}
+          >
             {recipe.title}
           </h2>
-          {recipe.vegetarian && (
-            <span className="bg-green-200 text-green-900 tracking-tight font-medium mb-5 text-sm px-2.5 py-0.5 rounded">
-              Vegetarian
-            </span>
-          )}
+          <RecipeBadges className="pb-12 md:pb-0" recipe={recipe} />
         </div>
-        <hr className="h-px my-2 bg-slate-300"></hr>
-        <p className="text-sm">
-          Preparation time:{" "}
-          {recipe.preparationMinutes != -1
-            ? `${recipe.preparationMinutes} minute${
-                recipe.preparationMinutes > 1 ? "s" : ""
-              }`
-            : "Unlisted"}
-        </p>
+
         <button
           className={`${headingOneLine ? "mt-7" : "mt-3"} ${
             recipe.favorite
               ? "bg-red-600 hover:bg-red-700"
               : "bg-blue-600 hover:bg-blue-700"
-          } text-white text-sm text-font-bold py-2 px-3 rounded`}
+          } text-white text-sm text-font-bold py-2 px-3 rounded absolute bottom-0 max-md:right-0 md:left-0`}
           disabled={recipe.loading ? "disabled" : ""}
           onClick={() => onToggleFavorite(recipe)}
         >
           {recipe.favorite ? "Remove from favorites" : "Add to favorites"}
         </button>
       </div>
-      <div className="flex-grow-0">
+   
         {recipe.image ? (
-          <img
-            className="h-36 w-52 rounded-md object-cover drop-shadow-lg"
-            src={recipe.image}
-          ></img>
+          <div className="h-48 w-full md:h-36 md:w-52 rounded-md drop-shadow-lg flex-shrink-0">
+            <img
+              className="w-full h-full object-cover rounded-md"
+              src={recipe.image}
+            ></img>
+          </div>
         ) : (
-          <div className="h-36 w-52 rounded-md bg-slate-200 flex flex-col justify-center text-center text-xs">
+          <div className="h-48 w-full md:h-36 md:w-52 rounded-md bg-slate-200 flex flex-col justify-center text-center text-xs">
             No image available.
           </div>
         )}
-      </div>
+   
     </div>
   );
 };

@@ -38,27 +38,26 @@ const HomePage = () => {
   return (
     <div>
       <div className="py-24 sm:py-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="flex flex-nowrap justify-between mx-auto max-w-2xl">
-            <h1 className=" font-bold tracking-tight mt-1 text-black sm:text-4xl">
-              Welcome back, {ctx.user.displayName}.
-            </h1>
-            <div className="flex items-center justify-center pb-5 gap-x-6">
-              <Link
-                href="/recipes"
-                className="transition rounded-md bg-slate-800 text-white px-4 py-2.5
-                font-semibold hover:bg-yellow-200 hover:text-black"
-              >
-                Recipes
-              </Link>
-              <Link
-                href="/favorites"
-                className="transition rounded-md bg-slate-800 text-white px-4 py-2.5
-                font-semibold hover:bg-yellow-200 hover:text-black"
-              >
-                Favorites <span aria-hidden="true">→</span>
-              </Link>
-            </div>
+
+        <div className="flex flex-wrap gap-y-5 justify-between mx-auto max-w-2xl">
+          <h1 className="font-bold tracking-tight mt-1 text-black text-3xl md:text-4xl">
+            Welcome back, {ctx.user.displayName}.
+          </h1>
+          <div className="flex items-center justify-center pb-5 gap-x-6">
+            <Link
+              href="/recipes"
+              className="transition rounded-md bg-slate-800 text-white px-4 py-2.5
+              font-semibold hover:bg-yellow-200 hover:text-black max-sm:text-sm md:text-base"
+            >
+              Recipes
+            </Link>
+            <Link
+              href="/favorites"
+              className="flex-nowrap transition rounded-md bg-slate-800 text-white px-4 py-2.5
+              font-semibold hover:bg-yellow-200 hover:text-black max-sm:text-sm md:text-base"
+            >
+              Favorites
+            </Link>
           </div>
         </div>
       </div>

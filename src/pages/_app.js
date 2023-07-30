@@ -10,7 +10,7 @@ import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 
 import Metadata from "./layout/Metadata";
-import NavBar from "./NavBar";
+import NavBar from "../components/UI/Navbar";
 
 export default function App({ Component, pageProps }) {
   return (
@@ -18,7 +18,7 @@ export default function App({ Component, pageProps }) {
       <Metadata />
       <main className={inter.className}>
         <NavBar />
-        <div className="container max-w-3xl mx-auto pt-10">
+        <div className="container px-5 md:px-0 md:max-w-xl xl:max-w-6xl mx-auto pt-4">
           <Component {...pageProps} />
         </div>
       </main>
