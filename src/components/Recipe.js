@@ -1,12 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import RecipeBadges from "./RecipeBadges";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 const Recipe = ({ recipe, onToggleFavorite, page }) => {
   const heading = useRef(null);
-  const [headingOneLine, setHeadingOneLine] = useState(false);
-  useEffect(() => {
-    if (heading.current) setHeadingOneLine(heading.current.clientHeight <= 28);
-  }, [heading]);
+
 
   return (
     <div
@@ -25,15 +23,15 @@ const Recipe = ({ recipe, onToggleFavorite, page }) => {
         </div>
 
         <button
-          className={`${headingOneLine ? "mt-7" : "mt-3"} ${
+          className={`${
             recipe.favorite
               ? "bg-red-600 hover:bg-red-700"
               : "bg-blue-600 hover:bg-blue-700"
-          } text-white text-sm text-font-bold py-2 px-3 rounded absolute bottom-0 max-md:right-0 md:left-0`}
+          } text-white text-sm font-semibold py-2 px-3 rounded absolute bottom-0 max-md:right-0 md:left-0`}
           disabled={recipe.loading ? "disabled" : ""}
           onClick={() => onToggleFavorite(recipe)}
         >
-          {recipe.favorite ? "Remove from favorites" : "Add to favorites"}
+          {recipe.favorite ? <>Remove favorite<FontAwesomeIcon icon={faXmark} className="pl-1 translate-y-px" /></> : <>Add favorite<FontAwesomeIcon icon={faPlus} className="pl-1 " /></>}
         </button>
       </div>
    
