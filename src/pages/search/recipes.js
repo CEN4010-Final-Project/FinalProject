@@ -66,15 +66,16 @@ const Recipes = () => {
         try { 
           let requestURL = `../api/recipes/name?s=${searchTerm}`;
           Object.keys(filters).forEach(filter => {
-            requestURL += `&${filter}=${filters[filter].join(",")}`
+           requestURL += `&${filter}=${filters[filter].join(",")}`
           })
           const result = await axios.get(requestURL);
+
           result.data = result.data.map((recipe) => ({
             ...recipe,
             loading: false,
             favorite:
-              userFavorites.find((f) => f.recipe_id == recipe.id) !== undefined,
-          }));
+              userFavorites.find((f) => parseInt(f) == recipe.id) !== undefined,
+          }));         
           setRecipes(result.data)
         } catch (err) {
           setError(err);
