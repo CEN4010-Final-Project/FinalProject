@@ -16,6 +16,7 @@ export default function App({ Component, pageProps }) {
   return (
     <AuthContextProvider>
       <Metadata />
+      <div id="modal" />
       <main className={inter.className}>
         <NavBar />
         <div className="container px-5 md:px-0 md:max-w-xl xl:max-w-6xl mx-auto pt-4">
