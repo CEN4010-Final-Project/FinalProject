@@ -14,7 +14,7 @@ const ViewRecipeModalContent = ({ recipe, onHide }) => {
 
   return (
     <Modal onHide={onHide}>
-      <div className="absolute -top-1 left-0 right-0 h-64 bg-zinc-200" />
+      <div className="absolute -top-1 left-0 right-0 h-52 bg-zinc-200" />
       <div className="flex items-center w-full max-w-full h-48 rounded-md overflow-hidden">
         <img
           src={recipe.image}
@@ -22,12 +22,12 @@ const ViewRecipeModalContent = ({ recipe, onHide }) => {
           className="blur-sm rounded-md brightness-50 h-48 object-cover"
         ></img>
         <h1
-          className={`absolute pl-6 pr-9 z-10 text-white text-6xl line-clamp-3 ${recipeHeaderFont.className}`}
+          className={`absolute pl-6 pr-9 z-10 text-white text-5xl md:text-6xl line-clamp-3 ${recipeHeaderFont.className}`}
         >
           {recipe.title}
         </h1>
       </div>
-      <div className="flex mt-2 gap-3 brightness-100">
+      <div className="flex flex-wrap gap-3 bg-zinc-200 p-3 -m-3 mt-0">
         <button
           className="px-3 py-1 font-semibold rounded-md brightness-95 hover:bg-white"
           onClick={() => document.getElementById("modal-bg").click()}
