@@ -29,6 +29,15 @@ export default async function handler(req, res) {
   switch (method) {
     case "POST":
       try {
+        const possibleDuplicate = await Favorite.findOne({
+          user_id: auth,
+          recipe_id: body.recipe_id,
+        });
+
+        if (possibleDuplicate) {
+          return res.status(409).send({ message: "Conflict: Duplicate entry" });
+        }
+
         const favorite = new Favorite({
           user_id: auth,
           recipe_id: body.recipe_id
