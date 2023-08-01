@@ -24,7 +24,13 @@ try {
 
 export default async function handler(req, res) {
   const { method, query, body } = req;
+
+  if (!req.headers.authorization) {
+    return res.status(401).json({ message: "Unauthorized: Missing authentication token" });
+  }
+  
   const auth = req.headers.authorization;
+  // console.log(auth);
 
   switch (method) {
     case "POST":
@@ -35,7 +41,7 @@ export default async function handler(req, res) {
         });
 
         if (possibleDuplicate) {
-          return res.status(409).send({ message: "Conflict: Duplicate entry" });
+          return res.status(409).json({ message: "Conflict: Duplicate entry" });
         }
 
         const favorite = new Favorite({
