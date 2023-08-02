@@ -31,15 +31,17 @@ const Recipe = ({ recipe, onToggleFavorite }) => {
             >
               {recipe.title}
             </h2>
-            <RecipeBadges className="pb-12 md:pb-0" recipe={recipe} />
+            <RecipeBadges className="pb-3" recipe={recipe} />
           </div>
-          <div className="flex gap-3 absolute bottom-0 max-md:right-0 md:left-0">
+          <div className="flex flex-wrap gap-3 relative md:absolute bottom-0 left-0 right-0">
             <button
               className={`${
-                recipe.favorite
+                recipe.loading
+                  ? "bg-gray-600"
+                  : recipe.favorite
                   ? "bg-red-600 hover:bg-red-700"
                   : "bg-blue-600 hover:bg-blue-700"
-              } text-white text-sm font-semibold py-2 px-3 rounded `}
+              } flex-grow text-white text-sm font-semibold py-2 px-3 rounded disabled:brightness-90 `}
               disabled={recipe.loading ? "disabled" : ""}
               onClick={() => onToggleFavorite(recipe)}
             >
@@ -59,13 +61,13 @@ const Recipe = ({ recipe, onToggleFavorite }) => {
               )}
             </button>
             <button
-              className={`${"bg-green-600 hover:bg-green-700"} text-white text-sm font-semibold py-2 px-3 rounded `}
+              className="bg-green-600 hover:bg-green-700 flex-grow text-white text-sm font-semibold py-2 px-3 rounded"
               onClick={() => setShowRecipeModal((s) => !s)}
             >
               View Recipe
               <FontAwesomeIcon
                 icon={faArrowUpRightFromSquare}
-                className="pl-1.5 text-xs"
+                className="pl-1.5 text-xs mb-px"
               />
             </button>
           </div>

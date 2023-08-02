@@ -30,8 +30,6 @@ export default async function handler(req, res) {
   }
   
   const auth = req.headers.authorization;
-  // console.log(auth);
-
   switch (method) {
     case "POST":
       try {
@@ -107,6 +105,7 @@ export default async function handler(req, res) {
             break;
         }     
       } catch (error) {
+        console.error(error);
         res.status(500).json({ message: "Error viewing favorites" });
       }    
       break;

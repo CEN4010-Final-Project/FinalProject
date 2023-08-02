@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     if (response.ok) {
       res.status(200).send(data.results);
     } else {
-      res.status(data.code).send(data.message);
+      res.status(data.code || response.status).send(data.message);
     }
   } catch (err) {
     res.status(500).send("Failed to parse response");

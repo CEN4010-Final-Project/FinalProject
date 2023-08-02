@@ -3,6 +3,7 @@ import authContext from "@/context/authContext";
 import axios from "axios";
 import RecipeList from "@/components/RecipeList";
 import Error from "@/components/UI/Error";
+import { toggleFavorite } from "@/helpers/favoriteAPI";
 
 const Favorites = () => {
   const ctx = useContext(authContext);
@@ -48,7 +49,7 @@ const Favorites = () => {
             ...recipe,
             loading: false,
             favorite:
-              userFavorites.find((f) => f.recipe_id == recipe.id) !== undefined,
+              userFavorites.find((f) => f && f.recipe_id == recipe.id) !== undefined,
           }));
           result.data = result.data.map((recipe) => ({
             ...recipe,
@@ -66,68 +67,6 @@ const Favorites = () => {
     return () => clearTimeout(timeout);
   }, [ctx.loading]);
 
-  const toggleFavoriteHandler = (recipe) => {
-    if (recipe.favorite) {
-      deleteFavoriteHandler(recipe);
-    } else {
-      addFavoriteHandler(recipe);
-    }
-  };
-
-  const addFavoriteHandler = async (recipe) => {
-    const index = recipes.indexOf(recipe);
-    try {
-      recipe.loading = true;
-      setRecipes((prevRecipes) => {
-        prevRecipes[index] = recipe;
-        return prevRecipes;
-      });
-      const response = await axios.post(
-        "/api/favorites",
-        { recipe_id: recipe.id },
-        { headers: { Authorization: ctx.user.uid } }
-      );
-      if (response.status == 200) {
-        recipe.loading = false;
-        recipe.favorite = true;
-        setRecipes((prevRecipes) => {
-          const recipes = prevRecipes.slice();
-          recipes[index] = recipe;
-          return recipes;
-        });
-      }
-    } catch (err) {
-      setError(err);
-    }
-  };
-
-  const deleteFavoriteHandler = async (recipe) => {
-    const index = recipes.indexOf(recipe);
-    try {
-      recipe.loading = true;
-      setRecipes((prevRecipes) => {
-        prevRecipes[index] = recipe;
-        return prevRecipes;
-      });
-      const response = await axios.delete(
-        `/api/favorites?recipe_id=${recipe.id}`,
-        {
-          headers: { Authorization: ctx.user.uid },
-        }
-      );
-      if (response.status == 200) {
-        recipe.loading = false;
-        recipe.favorite = false;
-        setRecipes((prevRecipes) => {
-          const recipes = prevRecipes.slice();
-          recipes[index] = recipe;
-          return recipes;
-        });
-      }
-    } catch (err) {
-      setError(err);
-    }
-  };
 
   return (
     <>
@@ -138,7 +77,7 @@ const Favorites = () => {
         recipes.length ? (
           <RecipeList
             recipes={recipes}
-            onToggleFavorite={toggleFavoriteHandler}
+            onToggleFavorite={(r) => toggleFavorite(r, setRecipes, setError, ctx.user)}
           ></RecipeList>
         ) : (
           <p className="pt-4">

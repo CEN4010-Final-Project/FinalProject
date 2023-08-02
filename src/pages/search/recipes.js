@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import RecipeList from "@/components/RecipeList";
 import Filters from "../../components/RecipeNameFilters";
 import Error from "@/components/UI/Error";
+import { toggleFavorite } from "@/helpers/favoriteAPI";
 
 const Recipes = () => {
   const ctx = useContext(authContext);
@@ -74,7 +75,7 @@ const Recipes = () => {
             ...recipe,
             loading: false,
             favorite:
-              userFavorites.find((f) => parseInt(f) == recipe.id) !== undefined,
+              userFavorites.find((f) => f && f == recipe.id) !== undefined,
           }));         
           setRecipes(result.data)
         } catch (err) {
@@ -85,75 +86,6 @@ const Recipes = () => {
     getData();
   }, [ctx.loading, searchTerm, filters]);
 
-  const toggleFavoriteHandler = (recipe) => {
-    if (recipe.favorite) {
-      deleteFavoriteHandler(recipe);
-    } else {
-      addFavoriteHandler(recipe);
-    }
-  };
-
-  const addFavoriteHandler = async (recipe) => {
-    const index = recipes.indexOf(recipe);
-    try {
-      recipe.loading = true;
-      setRecipes((prevRecipes) => {
-        prevRecipes[index] = recipe;
-        return prevRecipes;
-      });
-      const response = await axios.post(
-        "/api/favorites",
-        { recipe_id: recipe.id },
-        { headers: { Authorization: ctx.user.uid } }
-      );
-      if (response.status == 200) {
-        recipe.loading = false;
-        recipe.favorite = true;
-        setRecipes((prevRecipes) => {
-          const recipes = prevRecipes.slice();
-          recipes[index] = recipe;
-          return recipes;
-        });
-      }
-
-      // You can display a success message or perform any other actions upon successful addition.
-    } catch (error) {
-      console.error("Error adding to favorites:", error);
-      // Handle errors here or display an error message to the user.
-    }
-  };
-
-  const deleteFavoriteHandler = async (recipe) => {
-    const index = recipes.indexOf(recipe);
-    try {
-      recipe.loading = true;
-      setRecipes((prevRecipes) => {
-        prevRecipes[index] = recipe;
-        return prevRecipes;
-      });
-      const response = await axios.delete(
-        `/api/favorites?recipe_id=${recipe.id}`,
-        {
-          headers: { Authorization: ctx.user.uid },
-        }
-      );
-      if (response.status == 200) {
-        recipe.loading = false;
-        recipe.favorite = false;
-        setRecipes((prevRecipes) => {
-          const recipes = prevRecipes.slice();
-          recipes[index] = recipe;
-          return recipes;
-        });
-      }
-
-      // You can display a success message or perform any other actions upon successful addition.
-    } catch (error) {
-      console.error("Error adding to favorites:", error);
-      // Handle errors here or display an error message to the user.
-    }
-  };
-
   return (
     <>
       <h1 className="text-3xl font-bold pt-3">Results for '{searchTerm}'</h1>
@@ -162,7 +94,7 @@ const Recipes = () => {
           <Filters onChange={(f) => setFilters(f)} />
         {recipes ? (
           recipes.length ? (
-            <RecipeList recipes={recipes} onToggleFavorite={toggleFavoriteHandler}></RecipeList>
+            <RecipeList recipes={recipes} onToggleFavorite={(r) => toggleFavorite(r, setRecipes, setError, ctx.user)}></RecipeList>
           ) : (
             <p className="pt-4">No recipes found. Please check your search query and try again.</p>
           )
