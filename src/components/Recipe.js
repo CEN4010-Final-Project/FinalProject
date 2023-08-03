@@ -6,7 +6,7 @@ import {
   faXmark,
   faArrowUpRightFromSquare,
 } from "@fortawesome/free-solid-svg-icons";
-import ViewRecipeModalContent from "./modals/ViewRecipeModalContent";
+import ViewRecipeModalContent from "./modals/viewrecipe/ViewModal";
 
 const Recipe = ({ recipe, onToggleFavorite }) => {
   const heading = useRef(null);
