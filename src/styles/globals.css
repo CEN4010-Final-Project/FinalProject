@@ -2,4 +2,4 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-body { width: 100vw; margin: 0 auto; }
+body {width: 100vw; overflow-x: hidden; margin: 0 auto;}
