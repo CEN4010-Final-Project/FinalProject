@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { CommentContextProvider } from "@/context/commentContext";
 import Modal from "../../UI/Modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
@@ -8,7 +9,7 @@ import ViewSummary from "./ViewSummary";
 import ViewRecipe from "./ViewRecipe";
 import ViewIngredients from "./ViewIngredients";
 import ViewNutrients from "./nutrients/ViewNutrients";
-import ViewComments from "./ViewComments";
+import ViewComments from "./comments/ViewComments";
 
 import localFont from "next/font/local";
 const recipeHeaderFont = localFont({
@@ -90,7 +91,7 @@ const ViewModal = ({ recipe, onHide }) => {
       <div
         className={`${transition ? "opacity-0 " : "opacity-100 "}${
           selectedTab != 0 ? "-mt-52 " : " "
-        }px-2 md:px-16 py-8 flex-grow overflow-x-auto transition-opacity duration-200 overflow-y-auto`}
+        }px-4 md:px-16 py-4 md:py-8 flex-grow overflow-x-auto transition-opacity duration-200 overflow-y-auto`}
       >
         {colors && (
           <>
@@ -101,8 +102,14 @@ const ViewModal = ({ recipe, onHide }) => {
             {selectedTab == 2 && (
               <ViewIngredients recipe={recipe} colors={colors} />
             )}
-            {selectedTab == 3 && <ViewNutrients recipe={recipe} colors={colors} />}
-            {selectedTab == 4 && <ViewComments recipe={recipe} />}
+            {selectedTab == 3 && (
+              <ViewNutrients recipe={recipe} colors={colors} />
+            )}
+            {selectedTab == 4 && (
+              <CommentContextProvider colors={colors} recipe={recipe} >
+                <ViewComments />
+              </CommentContextProvider>
+            )}
           </>
         )}
       </div>

@@ -26,8 +26,6 @@ export const toggleFavorite = async(recipe, setRecipes, setError, user) => {
     recipe.loading = false;
     updateRecipes(recipe, setRecipes);
   }
-
- 
 };
 
 const updateRecipes = (recipe, setRecipes) => {

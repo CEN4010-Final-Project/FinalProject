@@ -9,6 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { faCircleDot } from "@fortawesome/free-regular-svg-icons";
 import { capitalize } from "@/helpers/capitalize";
+
 const ViewSummary = ({ recipe, colors }) => {
   return (
     <div className="min-h-full flex flex-col gap-5 text-lg ">
@@ -22,7 +23,7 @@ const ViewSummary = ({ recipe, colors }) => {
         </SummaryBlock>
         <SummaryBlock icon={faUserGroup} color={colors[1]}>
           {recipe?.servings
-            ? `Recipe makes ${recipe.servings} serving ${
+            ? `Recipe makes ${recipe.servings} serving${
                 recipe?.servings == 1 ? "" : "s"
               }`
             : "No servings listed"}
