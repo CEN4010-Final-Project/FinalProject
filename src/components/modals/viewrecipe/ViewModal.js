@@ -7,7 +7,7 @@ import { ColorExtractor } from "react-color-extractor";
 import ViewSummary from "./ViewSummary";
 import ViewRecipe from "./ViewRecipe";
 import ViewIngredients from "./ViewIngredients";
-import ViewNutrients from "./ViewNutrients";
+import ViewNutrients from "./nutrients/ViewNutrients";
 import ViewComments from "./ViewComments";
 
 import localFont from "next/font/local";
@@ -31,11 +31,14 @@ const ViewModal = ({ recipe, onHide }) => {
 
   useEffect(() => {
     if (recipe && !recipe.image) {
-      setColors(["#000", "#000", "#000", "#000", "#000","#000"]);
+      setColors(Array(["#F00", "#0F0", "#00F", "#FF0", "#F0F", "#0FF"]));
     }
-  }, [])
+  }, []);
   return (
-    <Modal onHide={onHide} className="flex flex-col max-h-full overflow-y-hidden">
+    <Modal
+      onHide={onHide}
+      className="flex flex-col max-h-full overflow-y-hidden"
+    >
       <div
         className="relative w-full p-3 transition-transform duration-500"
         style={{ transform: selectedTab != 0 ? "translate(0, -12.75rem)" : "" }}
@@ -46,18 +49,18 @@ const ViewModal = ({ recipe, onHide }) => {
             "flex items-center w-full max-w-full h-48 rounded-md overflow-hidden"
           }
         >
-          {recipe.image && 
-          <ColorExtractor getColors={(colors) => setColors(colors)}>
-            <img
-              src={recipe.image}
-              style={{ minWidth: "130%", minHeight: "130%", margin: "-80px" }}
-              className="blur-sm rounded-md brightness-50 h-48 object-cover"
-            ></img>
-          </ColorExtractor>
-          }
-          
+          {recipe.image && (
+            <ColorExtractor getColors={(colors) => setColors(colors)}>
+              <img
+                src={recipe.image}
+                style={{ minWidth: "130%", minHeight: "130%", margin: "-80px" }}
+                className="blur-sm rounded-md brightness-50 h-48 object-cover"
+              ></img>
+            </ColorExtractor>
+          )}
+
           <h1
-            className={`absolute pl-6 pr-9 z-10text-5xl md:text-6xl line-clamp-3 ${
+            className={`absolute pl-6 pr-9 z-10 text-5xl md:text-6xl line-clamp-3 ${
               recipe.image ? "text-white" : ""
             } ${recipeHeaderFont.className}`}
           >
@@ -85,19 +88,24 @@ const ViewModal = ({ recipe, onHide }) => {
         </div>
       </div>
       <div
-        className={`${transition ? "opacity-0" : "opacity-100"} ${
-          selectedTab != 0 ? "-mt-52 " : ""
-        }px-16 py-8 flex-grow transition-opacity duration-200 overflow-y-auto`}
+        className={`${transition ? "opacity-0 " : "opacity-100 "}${
+          selectedTab != 0 ? "-mt-52 " : " "
+        }px-2 md:px-16 py-8 flex-grow overflow-x-auto transition-opacity duration-200 overflow-y-auto`}
       >
-        {colors && <>
-          {selectedTab == 0 && <ViewSummary recipe={recipe} colors={colors} />}
-          {selectedTab == 1 && <ViewRecipe recipe={recipe} />}
-          {selectedTab == 2 && <ViewIngredients recipe={recipe} />}
-          {selectedTab == 3 && <ViewNutrients recipe={recipe} />}
-          {selectedTab == 4 && <ViewComments recipe={recipe} />}
-        </>
-        }
-       </div>
+        {colors && (
+          <>
+            {selectedTab == 0 && (
+              <ViewSummary recipe={recipe} colors={colors} />
+            )}
+            {selectedTab == 1 && <ViewRecipe recipe={recipe} colors={colors} />}
+            {selectedTab == 2 && (
+              <ViewIngredients recipe={recipe} colors={colors} />
+            )}
+            {selectedTab == 3 && <ViewNutrients recipe={recipe} colors={colors} />}
+            {selectedTab == 4 && <ViewComments recipe={recipe} />}
+          </>
+        )}
+      </div>
     </Modal>
   );
 };

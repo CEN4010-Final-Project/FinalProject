@@ -31,17 +31,17 @@ const ViewSummary = ({ recipe, colors }) => {
       <div className="flex-grow grid grid-cols-3 gap-5">
         <SummaryBlock icon={faSquarePlus} color={colors[2]}>
           {recipe?.diets?.length
-            ? recipe.diets.map((diet) => <div>{capitalize(diet)}</div>)
+            ? recipe.diets.map((diet) => <div key={diet}>{capitalize(diet)}</div>)
             : "No diets listed"}
         </SummaryBlock>
         <SummaryBlock icon={faCircleDot} color={colors[3]}>
           {recipe?.dishTypes?.length
-            ? recipe.dishTypes.map((dish) => <div>{capitalize(dish)}</div>)
+            ? recipe.dishTypes.map((dish) => <div key={dish}>{capitalize(dish)}</div>)
             : "No dishes listed"}
         </SummaryBlock>
         <SummaryBlock icon={faEarthAmericas} color={colors[4]}>
           {recipe?.cuisines?.length
-            ? recipe.cuisines.map((cuisine) => <div>{capitalize(cuisine)}</div>)
+            ? recipe.cuisines.map((cuisine) => <div key={cuisine}>{capitalize(cuisine)}</div>)
             : "No cuisines listed"}
         </SummaryBlock>
       </div>
