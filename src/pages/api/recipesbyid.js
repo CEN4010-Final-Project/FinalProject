@@ -4,7 +4,6 @@ export default async function handler(req, res) {
       `https://api.spoonacular.com/recipes/informationBulk?apiKey=${process.env.API_KEY}&ids=${req.query.s}&includeNutrition=true`
     );
     const data = await response.json();
-    // console.log(response)
     if (response.ok) {
       res.status(200).send(data);
     } else {

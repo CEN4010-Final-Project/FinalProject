@@ -36,7 +36,6 @@ const ViewModal = ({ recipe, onHide }) => {
       setColors(Array(["#F00", "#0F0", "#00F", "#FF0", "#F0F", "#0FF"]));
     }
     if (recipe) {
-      console.log(recipe.id);
       fetch("/api/lastViewed", {
         method: "PUT",
         headers: {

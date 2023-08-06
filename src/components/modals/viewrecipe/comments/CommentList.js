@@ -3,7 +3,7 @@ import authContext from "@/context/authContext";
 import commentContext from "@/context/commentContext";
 import Comment from "./Comment";
 
-const CommentList = ({ parentID, className }) => {
+const CommentList = ({ parentID }) => {
   const authCtx = useContext(authContext);
   const commentCtx = useContext(commentContext);
   const [comments, setComments] = useState(null);
@@ -25,7 +25,7 @@ const CommentList = ({ parentID, className }) => {
   }, [commentCtx.reloadCommentsFlag]);
 
   return comments && (
-    <div className={`mb-3 ${className} ${parentID == null ? "" : "border-l-2 pl-4"}`}>
+    <div className={`mb-3 ${parentID == null ? "" : "border-l-2 pl-4"}`}>
       {comments.length ? (
         comments.map((comment, index) => (
           <Comment

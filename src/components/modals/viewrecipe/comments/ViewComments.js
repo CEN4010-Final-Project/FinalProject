@@ -22,12 +22,12 @@ const ViewComments = () => {
   return (
     <div className="min-h-full flex flex-col">
       <h2 className="text-lg font-semibold">Comments</h2>
+      <div className="flex-grow">
       <CommentList
-        className="flex-grow"
         parentID={null}
         reloadCommentsFlag={reloadCommentsFlag}
       />
-
+      </div>
       <div className="border-t-2">
         <textarea
           className="w-full h-52 md:h-28 p-2 focus:outline-slate-200"

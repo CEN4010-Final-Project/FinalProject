@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import authContext from "@/context/authContext";
 import commentContext from "@/context/commentContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCaretUp, faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { faThumbsUp, faThumbsDown } from "@fortawesome/free-regular-svg-icons";
 import { formattedColor } from "@/helpers/RGBtoHSL";
 import CommentList from "./CommentList";
@@ -50,25 +51,64 @@ const Comment = ({ comment, index }) => {
     }
   };
 
+  const toggleLikeOrDislikeHandler = async (likeOrDislike) => {
+    const result = !(likeOrDislike ? comment.userLiked : comment.userDisliked)
+      ? await commentCtx.likeOrDislikeComment(
+          comment._id,
+          authCtx.user,
+          likeOrDislike
+        )
+      : await commentCtx.removeLikeOrDislike(comment._id, authCtx.user);
+    if (result.success) {
+      commentCtx.reloadComments();
+    } else {
+      console.log(result.response);
+    }
+  };
+
   return (
     <div key={comment._id} className={`${index > 0 ? "border-t-2" : ""} py-2`}>
-      <h3 className="text-zinc-500">
-        <strong
-          className="font-semibold"
-          style={{
-            color: formattedColor(color, 40),
-          }}
-        >
-          {comment.user_name}
-        </strong>{" "}
-        &bull; {comment.time ? formatDate(comment.time) : "no date listed"}
-      </h3>
+      <div className="flex justify-between">
+        <h3 className="text-zinc-500">
+          <strong
+            className="font-semibold"
+            style={{
+              color: formattedColor(color, 40),
+            }}
+          >
+            {comment.user_name}
+          </strong>{" "}
+          &bull; {comment.time ? formatDate(comment.time) : "no date listed"}
+        </h3>
+        {comment.hasChildren && (
+          <button onClick={() => setShowChildComments((s) => !s)}>
+            <span className="max-sm:hidden inline">
+              {showChildComments ? "Show" : "Hide"} replies&nbsp;&nbsp;
+            </span>
+            <FontAwesomeIcon
+              className="max-sm:text-lg text-sm text-zinc-500"
+              icon={showChildComments ? faCaretUp : faCaretDown}
+            />
+          </button>
+        )}
+      </div>
+
       {
         <div className="flex my-1 gap-2">
-          <button className="bg-slate-200 rounded-full p-0.5 px-2.5 text-sm">
+          <button
+            className={`${
+              comment.userLiked ? "bg-green-200 text-green-950" : "bg-slate-200"
+            } rounded-full p-0.5 px-2.5 text-sm`}
+            onClick={() => toggleLikeOrDislikeHandler(1)}
+          >
             <FontAwesomeIcon icon={faThumbsUp} /> {comment.likes}
           </button>
-          <button className="bg-slate-200 rounded-full p-0.5 px-2.5 text-sm">
+          <button
+            className={`${
+              comment.userDisliked ? "bg-red-200 text-red-950" : "bg-slate-200"
+            } rounded-full p-0.5 px-2.5 text-sm`}
+            onClick={() => toggleLikeOrDislikeHandler(0)}
+          >
             <FontAwesomeIcon icon={faThumbsDown} /> {comment.dislikes}
           </button>
           <button
@@ -77,14 +117,6 @@ const Comment = ({ comment, index }) => {
           >
             {replying ? "Cancel" : "Reply"}
           </button>
-          {comment.hasChildren && (
-            <button
-              className="bg-slate-200 rounded-full p-0.5 px-2.5 text-sm"
-              onClick={() => setShowChildComments((s) => !s)}
-            >
-              {showChildComments ? "Hide replies" : "Show Replies"}
-            </button>
-          )}
         </div>
       }
       <div>{comment.content}</div>
