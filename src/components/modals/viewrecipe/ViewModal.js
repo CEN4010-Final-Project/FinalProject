@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CommentContextProvider } from "@/context/commentContext";
 import Modal from "../../UI/Modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,13 +10,14 @@ import ViewRecipe from "./ViewRecipe";
 import ViewIngredients from "./ViewIngredients";
 import ViewNutrients from "./nutrients/ViewNutrients";
 import ViewComments from "./comments/ViewComments";
+import authContext from "@/context/authContext";
 
 import localFont from "next/font/local";
 const recipeHeaderFont = localFont({
   src: "../../../assets/fonts/RecipeHeader.otf",
 });
-
 const ViewModal = ({ recipe, onHide }) => {
+  const ctx = useContext(authContext);
   const tabs = ["Summary", "Recipe", "Ingredients", "Nutrients", "Comments"];
   const [selectedTab, setSelectedTab] = useState(0);
   const [transition, setTransition] = useState(false);
@@ -33,6 +34,17 @@ const ViewModal = ({ recipe, onHide }) => {
   useEffect(() => {
     if (recipe && !recipe.image) {
       setColors(Array(["#F00", "#0F0", "#00F", "#FF0", "#F0F", "#0FF"]));
+    }
+    if (recipe) {
+      console.log(recipe.id);
+      fetch("/api/lastViewed", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: ctx.user.uid,
+        },
+        body: JSON.stringify({ recipeData: recipe.id }),
+      }).then((response) => response.json());
     }
   }, []);
   return (
