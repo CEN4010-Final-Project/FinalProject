@@ -14,7 +14,7 @@ import ViewCommentsSignedOut from "./comments/ViewCommentsSignedOut";
 import authContext from "@/context/authContext";
 
 import localFont from "next/font/local";
-import { Space_Grotesk } from "next/font/google";
+
 const recipeHeaderFont = localFont({
   src: "../../../assets/fonts/RecipeHeader.otf",
 });
@@ -121,11 +121,11 @@ const ViewModal = ({ recipe, onHide }) => {
             {tabs[selectedTab] == "Nutrients" && recipe.nutrition && (
               <ViewNutrients recipe={recipe} colors={colors} />
             )}
-            {tabs[selectedTab] == "Comments" && ctx.user ? (
+            {tabs[selectedTab] == "Comments" && (ctx.user ? (
               <CommentContextProvider colors={colors} recipe={recipe}>
                 <ViewComments />
               </CommentContextProvider>
-            ) : <ViewCommentsSignedOut setSelectedTab={setSelectedTab} />}
+            ) : <ViewCommentsSignedOut setSelectedTab={setSelectedTab} />)}
           </>
         )}
       </div>
