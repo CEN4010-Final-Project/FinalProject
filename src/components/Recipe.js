@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
+import authContext from "@/context/authContext";
 import RecipeBadges from "./RecipeBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -9,6 +10,7 @@ import {
 import ViewRecipeModalContent from "./modals/viewrecipe/ViewModal";
 
 const Recipe = ({ recipe, onToggleFavorite }) => {
+  const ctx = useContext(authContext);
   const heading = useRef(null);
   const [showRecipeModal, setShowRecipeModal] = useState(false);
   return (
@@ -36,8 +38,8 @@ const Recipe = ({ recipe, onToggleFavorite }) => {
           <div className="flex flex-wrap gap-3 relative md:absolute bottom-0 left-0 right-0">
             <button
               className={`${
-                recipe.loading
-                  ? "bg-gray-600"
+                recipe.loading || !ctx.user
+                  ? "bg-zinc-600 hover:bg-zinc-700"
                   : recipe.favorite
                   ? "bg-red-600 hover:bg-red-700"
                   : "bg-blue-600 hover:bg-blue-700"
@@ -45,7 +47,9 @@ const Recipe = ({ recipe, onToggleFavorite }) => {
               disabled={recipe.loading ? "disabled" : ""}
               onClick={() => onToggleFavorite(recipe)}
             >
-              {recipe.favorite ? (
+              {!ctx.user ? (
+                "Sign in to favorite"
+              ) : recipe.favorite ? (
                 <>
                   Remove favorite
                   <FontAwesomeIcon

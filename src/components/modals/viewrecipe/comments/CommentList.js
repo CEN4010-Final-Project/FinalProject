@@ -25,7 +25,7 @@ const CommentList = ({ parentID }) => {
   }, [commentCtx.reloadCommentsFlag]);
 
   return comments && (
-    <div className={`mb-3 ${parentID == null ? "" : "border-l-2 pl-4"}`}>
+    <div className={`mb-3 ${parentID == null ? "" : "border-l-2 pl-3"}`}>
       {comments.length ? (
         comments.map((comment, index) => (
           <Comment

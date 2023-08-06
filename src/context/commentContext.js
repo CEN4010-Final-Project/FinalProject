@@ -21,7 +21,7 @@ export const CommentContextProvider = ({ recipe, colors, children }) => {
     }
   };
 
-  const addComment = async (newComment, user) => {
+  const addComment = async (newComment, user, parent) => {
     try {
       const response = await axios.post(
         "/api/comments",
@@ -29,7 +29,7 @@ export const CommentContextProvider = ({ recipe, colors, children }) => {
           action: "comment",
           user_name: user.displayName,
           recipe_id: recipe.id,
-          parent_id: currentParent ? currentParent._id : null,
+          parent_id: parent,
           content: newComment,
         },
         { headers: { Authorization: user.uid } }

@@ -10,15 +10,19 @@ import ViewRecipe from "./ViewRecipe";
 import ViewIngredients from "./ViewIngredients";
 import ViewNutrients from "./nutrients/ViewNutrients";
 import ViewComments from "./comments/ViewComments";
+import ViewCommentsSignedOut from "./comments/ViewCommentsSignedOut";
 import authContext from "@/context/authContext";
 
 import localFont from "next/font/local";
+import { Space_Grotesk } from "next/font/google";
 const recipeHeaderFont = localFont({
   src: "../../../assets/fonts/RecipeHeader.otf",
 });
 const ViewModal = ({ recipe, onHide }) => {
   const ctx = useContext(authContext);
-  const tabs = ["Summary", "Recipe", "Ingredients", "Nutrients", "Comments"];
+  const tabs = ctx.user
+    ? ["Summary", "Ingredients", "Recipe", "Nutrients", "Comments"]
+    : ["Summary", "Recipe", "Comments"];
   const [selectedTab, setSelectedTab] = useState(0);
   const [transition, setTransition] = useState(false);
   const [colors, setColors] = useState(null);
@@ -35,7 +39,7 @@ const ViewModal = ({ recipe, onHide }) => {
     if (recipe && !recipe.image) {
       setColors(Array(["#F00", "#0F0", "#00F", "#FF0", "#F0F", "#0FF"]));
     }
-    if (recipe) {
+    if (recipe && ctx.user) {
       fetch("/api/lastViewed", {
         method: "PUT",
         headers: {
@@ -101,26 +105,27 @@ const ViewModal = ({ recipe, onHide }) => {
       </div>
       <div
         className={`${transition ? "opacity-0 " : "opacity-100 "}${
-          selectedTab != 0 ? "-mt-52 " : " "
+          tabs[selectedTab] != "Summary" ? "-mt-52 " : " "
         }px-4 md:px-16 py-4 md:py-8 flex-grow overflow-x-auto transition-opacity duration-200 overflow-y-auto`}
       >
         {colors && (
           <>
-            {selectedTab == 0 && (
+            {tabs[selectedTab] == "Summary" && (
               <ViewSummary recipe={recipe} colors={colors} />
             )}
-            {selectedTab == 1 && <ViewRecipe recipe={recipe} colors={colors} />}
-            {selectedTab == 2 && (
+              {tabs[selectedTab] == "Ingredients" && recipe.nutrition && (
               <ViewIngredients recipe={recipe} colors={colors} />
             )}
-            {selectedTab == 3 && (
+            {tabs[selectedTab] == "Recipe" && <ViewRecipe recipe={recipe} colors={colors} />}
+          
+            {tabs[selectedTab] == "Nutrients" && recipe.nutrition && (
               <ViewNutrients recipe={recipe} colors={colors} />
             )}
-            {selectedTab == 4 && (
-              <CommentContextProvider colors={colors} recipe={recipe} >
+            {tabs[selectedTab] == "Comments" && ctx.user ? (
+              <CommentContextProvider colors={colors} recipe={recipe}>
                 <ViewComments />
               </CommentContextProvider>
-            )}
+            ) : <ViewCommentsSignedOut setSelectedTab={setSelectedTab} />}
           </>
         )}
       </div>

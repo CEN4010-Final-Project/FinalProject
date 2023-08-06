@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import authContext from "@/context/authContext";
 import commentContext from "@/context/commentContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,11 +11,11 @@ const Comment = ({ comment, index }) => {
   const authCtx = useContext(authContext);
   const commentCtx = useContext(commentContext);
   const [currentReply, setCurrentReply] = useState("");
-  const [color, setColors] = useState(
+  const [color, setColor] = useState(
     commentCtx.colors[Math.round(Math.random() * 5)]
   );
   const [showChildComments, setShowChildComments] = useState(false);
-  const replying = commentCtx.currentParent == comment;
+  const replying = commentCtx.currentParent?._id == comment._id;
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const difference = new Date().getTime() - date.getTime();
@@ -36,15 +36,16 @@ const Comment = ({ comment, index }) => {
   };
 
   const beginReplyHandler = () => {
-    commentCtx.setCurrentParent((prevComment) =>
-      prevComment == comment ? null : comment
+    commentCtx.setCurrentParent((prevComment) => prevComment?._id == comment._id ? null : comment
+  
     );
   };
 
   const addReplyHandler = async () => {
-    const result = await commentCtx.addComment(currentReply, authCtx.user);
+    const result = await commentCtx.addComment(currentReply, authCtx.user, commentCtx.currentParent);
     if (result.success) {
       commentCtx.reloadComments();
+      commentCtx.setCurrentParent(null);
       setShowChildComments(true);
     } else {
       console.log(result.response);
@@ -60,14 +61,15 @@ const Comment = ({ comment, index }) => {
         )
       : await commentCtx.removeLikeOrDislike(comment._id, authCtx.user);
     if (result.success) {
-      commentCtx.reloadComments();
+      await commentCtx.reloadComments();
     } else {
       console.log(result.response);
     }
+    
   };
 
   return (
-    <div key={comment._id} className={`${index > 0 ? "border-t-2" : ""} py-2`}>
+    <div key={comment._id} className={`${index > 0 ? "border-t-2" : ""} py-3`}>
       <div className="flex justify-between">
         <h3 className="text-zinc-500">
           <strong
@@ -121,16 +123,16 @@ const Comment = ({ comment, index }) => {
       }
       <div>{comment.content}</div>
       {replying && (
-        <div className="border-l-2 pl-4 mt-2 mb-1">
+        <div className="border-l-2 pl-3 mt-2">
           <textarea
-            className="w-full p-2 h-52 md:h-28 focus:outline-slate-200"
+            className="w-full p-2 h-52 md:h-28 resize-none -mb-1 focus:outline-slate-200"
             placeholder={`Reply to ${comment.user_name}`}
             value={currentReply}
             onChange={(e) => setCurrentReply(e.target.value)}
             maxLength="150"
           ></textarea>
           <button
-            className="relative float-right bg-yellow-200 rounded-lg px-3 py-1 font-semibold z-10 -mt-12 mr-8"
+            className="relative float-right bg-yellow-200 rounded-lg px-3 py-1 font-semibold z-10 -mt-11 mr-2.5"
             onClick={addReplyHandler}
           >
             Reply

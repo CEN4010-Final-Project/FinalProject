@@ -19,11 +19,11 @@ const Navbar = () => {
     }
   };
   useEffect(() => {
-    if (router.pathname == "/search/recipes" && router.query.s)
+    if (router.pathname == "/search" && router.query.s)
       setSearchTerm(router.query.s);
   }, [router.query]);
   const searchHandler = () => {
-    router.push(`/search/recipes?s=${searchTerm}`);
+    router.push(`/search?s=${searchTerm}`);
   };
   return (
     <nav

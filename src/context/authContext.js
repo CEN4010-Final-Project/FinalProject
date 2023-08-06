@@ -33,12 +33,13 @@ export const AuthContextProvider = ({ children }) => {
 
   const signOutRename = async () => {
     await signOut(auth);
+    router.push("/")
   };
-  useEffect(() => {
 
-    if (!loading && !user) 
+  useEffect(() => {
+    if (!user && router.pathname == "/favorites")
       router.push("/")
-  }, [user])
+  }, [router.pathname, user])
 
   return (
     <authContext.Provider value={{ signIn, signOut: signOutRename, user, loading, error }}>

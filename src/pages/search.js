@@ -3,11 +3,11 @@ import authContext from "@/context/authContext";
 import axios from "axios";
 import { useRouter } from "next/router";
 import RecipeList from "@/components/RecipeList";
-import Filters from "../../components/RecipeNameFilters";
+import Filters from "../components/RecipeNameFilters";
 import Error from "@/components/UI/Error";
 import { toggleFavorite } from "@/helpers/favoriteAPI";
 
-const Recipes = () => {
+const Search = () => {
   const ctx = useContext(authContext);
   const router = useRouter();
 
@@ -21,6 +21,13 @@ const Recipes = () => {
     diets: []
   });
 
+  const toggleFavoriteHandler = async(recipe) => {
+    if (ctx.user) {
+      toggleFavorite(recipe, setRecipes, setError, ctx.user)
+    } else {
+      await ctx.signIn();
+    }
+  }
   useEffect(() => {
     const searchTermHandler = () => {
       setSearchTerm(router.query.s);
@@ -48,7 +55,7 @@ const Recipes = () => {
             "../api/favorites?action=list",
             {
               headers: {
-                Authorization: ctx.user.uid,
+                Authorization: ctx?.user?.uid,
               },
             }
           );
@@ -56,7 +63,7 @@ const Recipes = () => {
             userFavorites = favoritesResponse.data;
           }
         } catch (err) {  
-          if (err?.response?.status === 404) {
+          if (err?.response?.status === 404 || err?.response?.status === 401) {
             userFavorites = [];
           } else {
             console.log(err);
@@ -94,7 +101,7 @@ const Recipes = () => {
           <Filters onChange={(f) => setFilters(f)} />
         {recipes ? (
           recipes.length ? (
-            <RecipeList recipes={recipes} onToggleFavorite={(r) => toggleFavorite(r, setRecipes, setError, ctx.user)}></RecipeList>
+            <RecipeList recipes={recipes} onToggleFavorite={toggleFavoriteHandler}></RecipeList>
           ) : (
             <p className="pt-4">No recipes found. Please check your search query and try again.</p>
           )
@@ -106,4 +113,4 @@ const Recipes = () => {
   );
 };
 
-export default Recipes;
+export default Search;

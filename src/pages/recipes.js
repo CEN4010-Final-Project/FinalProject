@@ -20,7 +20,7 @@ const Recipes = () => {
             "../api/favorites?action=list",
             {
               headers: {
-                Authorization: ctx.user.uid,
+                Authorization: ctx?.user?.uid,
               },
             }
           );
@@ -30,7 +30,7 @@ const Recipes = () => {
         } catch (err) {
           userFavorites = [];
 
-          if (err?.response?.status === 404) {
+          if (err?.response?.status === 404 || err?.response?.status === 401) {
             userFavorites = [];
           } else {
             setError(err);
