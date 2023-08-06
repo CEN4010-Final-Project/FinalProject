@@ -83,7 +83,7 @@ const Comment = ({ comment, index }) => {
         {comment.hasChildren && (
           <button onClick={() => setShowChildComments((s) => !s)}>
             <span className="max-sm:hidden inline">
-              {showChildComments ? "Show" : "Hide"} replies&nbsp;&nbsp;
+              {showChildComments ? "Hide" : "Show"} replies&nbsp;&nbsp;
             </span>
             <FontAwesomeIcon
               className="max-sm:text-lg text-sm text-zinc-500"
