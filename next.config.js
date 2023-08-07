@@ -3,5 +3,6 @@ module.exports = {
     API_KEY: process.env.API_KEY,
     DB_URI: process.env.DB_URI,
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
-  }
+    GOOGLE_ANALYTICS: process.env.GOOGLE_ANALYTICS,
+  },
 };
