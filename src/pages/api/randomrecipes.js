@@ -1,7 +1,7 @@
 export default async function handler(req, res) {
   try {
     const response = await fetch(
-      `https://api.spoonacular.com/recipes/random?apiKey=${process.env.API_KEY}&number=6`
+      `https://api.spoonacular.com/recipes/random?apiKey=${process.env.API_KEY}&number=10`
     );
     const data = await response.json();
     if (response.ok) {

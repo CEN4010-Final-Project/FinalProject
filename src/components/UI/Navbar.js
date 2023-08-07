@@ -37,7 +37,7 @@ const Navbar = () => {
         >
           Tastebudz
         </Link>
-        <div className="md:hidden ml-auto">
+        <div className="md:hidden ml-auto mr-3">
             <FontAwesomeIcon className="text-xl mt-2 cursor-pointer" icon={faBars} onClick={() => setMenuCollapse(m => !m)}/>
         </div>
       </div>

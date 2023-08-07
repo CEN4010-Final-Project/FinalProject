@@ -20,7 +20,7 @@ const recipeHeaderFont = localFont({
 });
 const ViewModal = ({ recipe, onHide }) => {
   const ctx = useContext(authContext);
-  const tabs = ctx.user
+  const tabs = recipe.nutrition
     ? ["Summary", "Ingredients", "Recipe", "Nutrients", "Comments"]
     : ["Summary", "Recipe", "Comments"];
   const [selectedTab, setSelectedTab] = useState(0);

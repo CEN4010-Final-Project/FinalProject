@@ -36,34 +36,36 @@ const Recipe = ({ recipe, onToggleFavorite }) => {
             <RecipeBadges className="pb-3" recipe={recipe} />
           </div>
           <div className="flex flex-wrap gap-3 relative md:absolute bottom-0 left-0 right-0">
-            <button
-              className={`${
-                recipe.loading || !ctx.user
-                  ? "bg-zinc-600 hover:bg-zinc-700"
-                  : recipe.favorite
-                  ? "bg-red-600 hover:bg-red-700"
-                  : "bg-blue-600 hover:bg-blue-700"
-              } flex-grow text-white text-sm font-semibold py-2 px-3 rounded disabled:brightness-90 `}
-              disabled={recipe.loading ? "disabled" : ""}
-              onClick={() => onToggleFavorite(recipe)}
-            >
-              {!ctx.user ? (
-                "Sign in to favorite"
-              ) : recipe.favorite ? (
-                <>
-                  Remove favorite
-                  <FontAwesomeIcon
-                    icon={faXmark}
-                    className="pl-1 translate-y-px"
-                  />
-                </>
-              ) : (
-                <>
-                  Add favorite
-                  <FontAwesomeIcon icon={faPlus} className="pl-1 " />
-                </>
-              )}
-            </button>
+            {onToggleFavorite && (
+              <button
+                className={`${
+                  recipe.loading || !ctx.user
+                    ? "bg-zinc-600 hover:bg-zinc-700"
+                    : recipe.favorite
+                    ? "bg-red-600 hover:bg-red-700"
+                    : "bg-blue-600 hover:bg-blue-700"
+                } flex-grow text-white text-sm font-semibold py-2 px-3 rounded disabled:brightness-90 `}
+                disabled={recipe.loading ? "disabled" : ""}
+                onClick={() => onToggleFavorite(recipe)}
+              >
+                {!ctx.user ? (
+                  "Sign in to favorite"
+                ) : recipe.favorite ? (
+                  <>
+                    Remove favorite
+                    <FontAwesomeIcon
+                      icon={faXmark}
+                      className="pl-1 translate-y-px"
+                    />
+                  </>
+                ) : (
+                  <>
+                    Add favorite
+                    <FontAwesomeIcon icon={faPlus} className="pl-1 " />
+                  </>
+                )}
+              </button>
+            )}
             <button
               className="bg-green-600 hover:bg-green-700 flex-grow text-white text-sm font-semibold py-2 px-3 rounded"
               onClick={() => setShowRecipeModal((s) => !s)}

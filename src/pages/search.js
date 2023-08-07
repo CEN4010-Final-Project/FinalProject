@@ -3,7 +3,7 @@ import authContext from "@/context/authContext";
 import axios from "axios";
 import { useRouter } from "next/router";
 import RecipeList from "@/components/RecipeList";
-import Filters from "../components/RecipeNameFilters";
+import Filters from "../components/filters/RecipeFilters";
 import Error from "@/components/UI/Error";
 import { toggleFavorite } from "@/helpers/favoriteAPI";
 
@@ -14,20 +14,23 @@ const Search = () => {
   const [recipes, setRecipes] = useState(null);
   const [searchTerm, setSearchTerm] = useState(null);
   const [error, setError] = useState(null);
-  const [filters, setFilters] = useState({
+  const [options, setOptions] = useState({
+    ingredients: [],
+    nutrients: [],
     type: [],
     intolerances: [],
     cuisines: [],
-    diets: []
+    diet: [],
   });
 
-  const toggleFavoriteHandler = async(recipe) => {
+  const toggleFavoriteHandler = async (recipe) => {
     if (ctx.user) {
-      toggleFavorite(recipe, setRecipes, setError, ctx.user)
+      toggleFavorite(recipe, setRecipes, setError, ctx.user);
     } else {
       await ctx.signIn();
     }
-  }
+  };
+
   useEffect(() => {
     const searchTermHandler = () => {
       setSearchTerm(router.query.s);
@@ -47,68 +50,76 @@ const Search = () => {
         setRecipes([]);
         return;
       }
-      if (!ctx.loading) {
-        //get user's favorites
-        let userFavorites;
-        try {
-          const favoritesResponse = await axios.get(
-            "../api/favorites?action=list",
-            {
-              headers: {
-                Authorization: ctx?.user?.uid,
-              },
-            }
-          );
-          if (favoritesResponse.status === 200) {
-            userFavorites = favoritesResponse.data;
+      
+      //get user's favorites
+      let userFavorites;
+      try {
+        const favoritesResponse = await axios.get(
+          "../api/favorites?action=list",
+          {
+            headers: {
+              Authorization: ctx?.user?.uid,
+            },
           }
-        } catch (err) {  
-          if (err?.response?.status === 404 || err?.response?.status === 401) {
-            userFavorites = [];
-          } else {
-            console.log(err);
-          }
+        );
+        if (favoritesResponse.status === 200) {
+          userFavorites = favoritesResponse.data;
         }
-
-        // get recipes by search term
-        try { 
-          let requestURL = `../api/recipes/name?s=${searchTerm}`;
-          Object.keys(filters).forEach(filter => {
-           requestURL += `&${filter}=${filters[filter].join(",")}`
-          })
-          const result = await axios.get(requestURL);
-
-          result.data = result.data.map((recipe) => ({
-            ...recipe,
-            loading: false,
-            favorite:
-              userFavorites.find((f) => f && f == recipe.id) !== undefined,
-          }));         
-          setRecipes(result.data)
-        } catch (err) {
-          setError(err);
+      } catch (err) {
+        if (err?.response?.status === 404 || err?.response?.status === 401) {
+          userFavorites = [];
+        } else {
+          console.log(err);
         }
       }
+
+      // get recipes by search term
+      try {
+        let requestURL = `../api/recipes?s=${searchTerm}`;
+        Object.keys(options).filter(o => o != "nutrients").forEach(option => {
+          requestURL += options[option].length ? `&${option}=${options[option].join(",")}` : ""
+        });
+        const result = await axios.get(requestURL);
+
+        result.data = result.data.map((recipe) => ({
+          ...recipe,
+          loading: false,
+          favorite:
+            userFavorites.find((f) => f && f == recipe.id) !== undefined,
+        }));
+        setRecipes(result.data);
+      } catch (err) {
+        setError(err);
+      }
+      
     };
-    getData();
-  }, [ctx.loading, searchTerm, filters]);
+    if (!ctx.loading) getData();
+  }, [ctx.loading, searchTerm, options]);
 
   return (
     <>
-      <h1 className="text-3xl font-bold pt-3">Results for '{searchTerm}'</h1>
-      {error ? <Error error={error} /> : 
+      <h1 className="text-3xl font-bold pt-3 mb-6">Results for '{searchTerm}'</h1>
+      {error ? (
+        <Error error={error} />
+      ) : (
         <>
-          <Filters onChange={(f) => setFilters(f)} />
-        {recipes ? (
-          recipes.length ? (
-            <RecipeList recipes={recipes} onToggleFavorite={toggleFavoriteHandler}></RecipeList>
+          <Filters options={options} applyFilters={setOptions} />
+          {recipes ? (
+            recipes.length ? (
+              <RecipeList
+                recipes={recipes}
+                onToggleFavorite={toggleFavoriteHandler}
+              ></RecipeList>
+            ) : (
+              <p className="pt-4">
+                No recipes found. Please check your search query and try again.
+              </p>
+            )
           ) : (
-            <p className="pt-4">No recipes found. Please check your search query and try again.</p>
-          )
-        ) : (
-          <p className="mt-3 italic text-slate-500">Loading...</p>
-        )}
-      </>}
+            <p className="mt-3 italic text-slate-500">Loading...</p>
+          )}
+        </>
+      )}
     </>
   );
 };

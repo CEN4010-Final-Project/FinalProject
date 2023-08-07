@@ -58,7 +58,7 @@ const Recipes = () => {
 
   return (
     <>
-      <h1 className="text-3xl font-bold pt-3">Recipes</h1>
+      <h1 className="text-3xl font-bold pt-3 mb-6">Recipes</h1>
       {error ? (
         <Error error={error} />
       ) : recipes ? (

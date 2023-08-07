@@ -79,7 +79,7 @@ export default async function handler(req, res) {
           case "view":
             const favorite = await Favorite.findOne({
               user_id: auth,
-              recipe: query.recipe,
+              recipe_id: query.recipe_id,
             });
             if (favorite) {
               console.log(`Viewing ${favorite.recipe} from favorites`);

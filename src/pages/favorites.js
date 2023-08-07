@@ -70,7 +70,7 @@ const Favorites = () => {
 
   return (
     <>
-      <h1 className="text-3xl font-bold pt-3">Favorites</h1>
+      <h1 className="text-3xl font-bold pt-3 mb-6">Favorites</h1>
       {error ? (
         <Error error={error} />
       ) : recipes ? (

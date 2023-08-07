@@ -1,8 +1,8 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import authContext from "@/context/authContext";
 import Link from "next/link";
-import axios from "axios";
-import Recipe from "@/components/Recipe";
+import LastViewedRecipe from "@/components/LastViewedRecipe";
+import RecipeOfTheDay from "@/components/RecipeOfTheDay";
 
 const LandingPage = () => {
   const ctx = useContext(authContext);
@@ -33,84 +33,34 @@ const LandingPage = () => {
 
 const HomePage = () => {
   const ctx = useContext(authContext);
-  // let recipe;
-  // useEffect(() => {
-  //   const getLastViewed = async () => {
-  //     if (!ctx.loading) {
-  //       let lastView;
-  //       try {
-  //         const lastViewed = await axios.get("../api/lastViewed", {
-  //           headers: {
-  //             Authorization: ctx.user.uid,
-  //           },
-  //         });
-  //         if (lastViewed.status === 200) {
-  //           lastView = lastViewed.data[0];
-  //         }
-  //         console.log(lastView);
-  //       } catch (err) {
-  //         if (err?.response?.status === 404) {
-  //           userFavorites = [];
-  //         } else {
-  //           console.log(err);
-  //         }
-  //       }
-
-  //       try {
-  //         // console.log(lastView);
-  //         const result = await axios.get(
-  //           `../api/recipesbyid?s=${lastView.recipe_id}`,
-  //           {
-  //             headers: {
-  //               Authorization: ctx.user.uid,
-  //             },
-  //           }
-  //         );
-  //         recipe = result.data[0];
-  //         console.log(result.data[0].title);
-  //       } catch (err) {
-  //         console.log(err);
-  //       }
-  //     }
-  //   };
-
-  //   const timeout = setTimeout(getLastViewed, 100);
-
-  //   return () => clearTimeout(timeout);
-  // }, [ctx.loading]);
-
   return (
-    <div>
-      <div className="py-24 sm:py-32">
-        <div className="flex flex-wrap gap-y-5 justify-between mx-auto max-w-2xl">
-          <h1 className="font-bold tracking-tight mt-1 text-black text-3xl md:text-4xl">
-            Welcome back, {ctx.user.displayName}.
-          </h1>
-          <div className="flex items-center justify-center pb-5 gap-x-6">
-            <Link
-              href="/recipes"
-              className="transition rounded-md bg-slate-800 text-white px-4 py-2.5
-              font-semibold hover:bg-yellow-200 hover:text-black max-sm:text-sm md:text-base"
-            >
-              Recipes
-            </Link>
-            <Link
-              href="/favorites"
-              className="flex-nowrap transition rounded-md bg-slate-800 text-white px-4 py-2.5
-              font-semibold hover:bg-yellow-200 hover:text-black max-sm:text-sm md:text-base"
-            >
-              Favorites
-            </Link>
-            {/* <Recipe
-              key={recipe.id}
-              recipe={recipe}
-              onToggleFavorite={onToggleFavorite}
-              page={page}
-            /> */}
-          </div>
+    <>
+      <div className="flex flex-wrap gap-y-5 justify-between mx-auto max-w-5xl border-4 bg-slate-50 border-slate-300 p-10 pb-5 my-10 rounded-3xl">
+        <h1 className="font-bold tracking-tight mt-1 text-black text-3xl md:text-4xl -mb-0">
+          Welcome back, {ctx.user.displayName}.
+        </h1>
+        <div className="flex items-center justify-center pb-5 gap-x-6">
+          <Link
+            href="/recipes"
+            className="transition rounded-md bg-slate-800 text-white px-4 py-2.5
+            font-semibold hover:bg-yellow-200 hover:text-black max-sm:text-sm md:text-base"
+          >
+            Recipes
+          </Link>
+          <Link
+            href="/favorites"
+            className="flex-nowrap transition rounded-md bg-slate-800 text-white px-4 py-2.5
+            font-semibold hover:bg-yellow-200 hover:text-black max-sm:text-sm md:text-base"
+          >
+            Favorites
+          </Link>
         </div>
       </div>
-    </div>
+      <div className="mx-auto flex flex-col gap-y-4 max-w-3xl pt-4">
+        <LastViewedRecipe />
+        <RecipeOfTheDay />
+      </div>
+    </>
   );
 };
 
