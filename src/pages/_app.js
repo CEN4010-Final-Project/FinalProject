@@ -7,6 +7,7 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 config.autoAddCss = false;
 
 import { Inter } from "next/font/google";
+import Script from "next/script";
 const inter = Inter({ subsets: ["latin"] });
 
 import Metadata from "./layout/Metadata";
@@ -15,6 +16,24 @@ import NavBar from "../components/UI/Navbar";
 export default function App({ Component, pageProps }) {
   return (
     <AuthContextProvider>
+      <Script
+        strategy="afterInteractive"
+        src={`https://www.googletagmanager.com/gtag/js?id=${process.env.GOOGLE_ANALYTICS}`}
+      />
+      <Script
+        id="google-analytics"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${process.env.GOOGLE_ANALYTICS}', {
+            page_path: window.location.pathname,
+          });
+              `,
+        }}
+      />
       <Metadata />
       <div id="modal" />
       <main className={inter.className}>
