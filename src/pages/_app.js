@@ -8,6 +8,7 @@ config.autoAddCss = false;
 
 import { Inter } from "next/font/google";
 import Script from "next/script";
+
 const inter = Inter({ subsets: ["latin"] });
 
 import Metadata from "./layout/Metadata";
@@ -18,7 +19,7 @@ export default function App({ Component, pageProps }) {
     <AuthContextProvider>
       <Script
         strategy="afterInteractive"
-        src={`https://www.googletagmanager.com/gtag/js?id=${process.env.GOOGLE_ANALYTICS}`}
+        src={`https://www.googletagmanager.com/gtag/js?id=G-G17T84Y9K5`}
       />
       <Script
         id="google-analytics"
@@ -28,7 +29,7 @@ export default function App({ Component, pageProps }) {
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', '${process.env.GOOGLE_ANALYTICS}', {
+          gtag('config', 'G-G17T84Y9K5', {
             page_path: window.location.pathname,
           });
               `,
